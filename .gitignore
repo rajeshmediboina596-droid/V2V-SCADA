@@ -1,0 +1,25 @@
+# Virtual Environments
+venv/
+env/
+.env
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Databases
+*.db
+*.sqlite3
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Reports
+reports/*.pdf
+
+# Certificates & Private Keys
+mqtt/certs/*.key
+# You may want to ignore all certs if they are generated locally
+# mqtt/certs/*.crt

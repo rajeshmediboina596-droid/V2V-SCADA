@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V2V SCADA HUD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="weather-overlay"></div>
+    <div id="map" class="fullscreen-map"></div>
+    
+    <div class="hud-overlay">
+        
+        <header class="hud-top-bar glass-hud">
+            <div class="brand">
+                <div class="logo-glow"></div>
+                <h1>V2V SCADA HUD</h1>
+            </div>
+            
+            <div class="mode-switch">
+                <button id="modeLive" class="mode-btn active">LIVE FEED</button>
+                <button id="modeDemo" class="mode-btn">DEMO SIM</button>
+            </div>
+            
+            <div class="v2i-module">
+                <span class="label">V2I SPaT INTERCEPT</span>
+                <span class="value tech-font warning-text" id="v2i-signal">SIGNAL SYNCING...</span>
+            </div>
+
+            <div class="global-metrics">
+                <div class="metric"><span class="label">VEHICLES</span><span id="valTotalVehicles" class="value">0</span></div>
+                <div class="metric"><span class="label">THREATS</span><span id="valActiveAlarms" class="value danger">0</span></div>
+            </div>
+            <div id="connectionStatus" class="status-badge disconnected">
+                <span class="pulse-dot"></span>
+                <span class="status-text">LINK LOST</span>
+            </div>
+        </header>
+
+        <aside class="hud-left glass-hud">
+            <nav class="hud-nav">
+                <button id="btnDemo" class="btn-hud warning">▶ RUN DEMO</button>
+                <button id="btnSpoof" class="btn-hud" style="border-color: var(--danger); color: var(--danger);">⚠️ SPOOF ATTACK</button>
+                <button id="btnExport" class="btn-hud primary">EXPORT PDF</button>
+            </nav>
+
+            <div class="hud-panel env-panel">
+                <h3>ENVIRONMENT</h3>
+                <div class="env-metrics">
+                    <div class="env-row"><span>SURFACE</span><span class="value safe-text">DRY</span></div>
+                    <div class="env-row"><span>VISIBILITY</span><span class="value">CLEAR (98%)</span></div>
+                    <div class="env-row"><span>FRICTION (µ)</span><span class="value tech-font">0.85</span></div>
+                </div>
+            </div>
+
+            <div class="hud-panel gps-panel">
+                <h3>GNSS/GPS CONSTELLATION</h3>
+                <div class="env-metrics">
+                    <div class="env-row"><span>FIX TYPE</span><span class="value safe-text">RTK 3D-FIX</span></div>
+                    <div class="env-row"><span>SATELLITES</span><span id="gpsSats" class="value tech-font">14 LOCKED</span></div>
+                    <div class="env-row"><span>HDOP ACCURACY</span><span id="gpsHdop" class="value tech-font">± 0.05m</span></div>
+                </div>
+            </div>
+
+            <div class="hud-panel platoon-panel">
+                <h3>PLATOONING COORDINATOR</h3>
+                <div class="platoon-status">
+                    <div class="env-row"><span>STATUS</span><span id="platoonState" class="value tech-font warning-text">SEARCHING...</span></div>
+                    <div class="env-row"><span>DRAFTING AERO</span><span id="platoonDrafting" class="value tech-font">0%</span></div>
+                </div>
+            </div>
+
+            <div class="roster" style="flex:1;">
+                <h3>ACTIVE UNITS</h3>
+                <div id="vehicleCards" class="vehicle-cards"></div>
+            </div>
+
+            <div class="hud-panel terminal-panel">
+                <h3>BROADCAST UPLINK</h3>
+                <div class="terminal-window">
+                    <div id="terminalLog" class="terminal-log">
+                        <div>> SYSTEM READY</div>
+                        <div>> ENCRYPTION ENABLED</div>
+                    </div>
+                    <div class="terminal-input-wrapper">
+                        <span class="prompt">></span>
+                        <input type="text" id="terminalInput" class="terminal-input" placeholder="Enter broadcast command..." autocomplete="off">
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <aside class="hud-right glass-hud">
+            <div class="hud-panel">
+                <h3>THREAT DETECTION</h3>
+                <ul id="alarmList" class="alarm-list">
+                    <li class="no-alarms">System Safe</li>
+                </ul>
+            </div>
+            
+            <div class="hud-panel net-panel">
+                <h3>NETWORK INTEGRITY</h3>
+                <div class="net-stats">
+                    <div class="net-box">
+                        <span class="label">AVG LATENCY</span>
+                        <span id="valLatency" class="value tech-font warning-text">-- ms</span>
+                    </div>
+                    <div class="net-box">
+                        <span class="label">CRYPTO (HMAC)</span>
+                        <span class="value safe-text">VERIFIED</span>
+                    </div>
+                    <div class="net-box">
+                        <span class="label">PACKET DROP</span>
+                        <span class="value tech-font safe-text">0.0%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hud-panel rsu-panel">
+                <h3>ROADSIDE UNIT (RSU) UPLINKS</h3>
+                <div class="env-metrics">
+                    <div class="env-row"><span>RSU-NODE-ALPHA</span><span id="rsu1" class="value tech-font safe-text">98% (-42dBm)</span></div>
+                    <div class="env-row"><span>RSU-NODE-BETA</span><span id="rsu2" class="value tech-font warning-text">64% (-71dBm)</span></div>
+                </div>
+            </div>
+
+            <div class="hud-panel chart-panel">
+                <h3>SPEED MATRIX</h3>
+                <div class="chart-wrapper">
+                    <canvas id="speedChart"></canvas>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Floating DPI Feed -->
+    <div class="hud-bottom-center glass-hud">
+        <div class="hud-panel dpi-panel" style="height: 100%; display: flex; flex-direction: column;">
+            <h3>DEEP PACKET INSPECTION (DPI) FEED</h3>
+            <div id="dpiFeed" class="dpi-feed tech-font">
+                <!-- Hex dump log -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/js/app.js?v=5"></script>
+</body>
+</html>
