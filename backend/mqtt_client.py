@@ -182,6 +182,10 @@ def process_telemetry_payload(payload_str: str, client=None, loop=None):
     Ingests, cryptographically verifies, evaluates collision physics,
     and dispatches a vehicle telemetry packet.
     """
+    t_start = time.perf_counter()
+    from backend.metrics import metrics
+    metrics.inc_ingested()
+
     if loop is None:
         loop = server_event_loop
     if client is None:
@@ -189,9 +193,11 @@ def process_telemetry_payload(payload_str: str, client=None, loop=None):
 
     is_valid, data, reason = verify_telemetry_packet(payload_str)
     if not is_valid:
+        metrics.inc_rejected()
         source_id = data.get('vehicle_id', 'UNKNOWN') if data else 'UNKNOWN'
         print(f"[SECURITY ALERT] Dropping invalid packet from {source_id} (Reason: {reason})")
         log_security_event("HMAC_SIGNATURE_DROP", source_id, f"Invalid packet rejected: {reason}", payload_str[:120])
+        metrics.telemetry_pipeline.record((time.perf_counter() - t_start) * 1000.0)
         return
 
     vid = data['vehicle_id']
@@ -235,7 +241,10 @@ def process_telemetry_payload(payload_str: str, client=None, loop=None):
         if not _is_due(last_pair_evaluation, pair, PAIR_EVALUATION_INTERVAL_SECONDS, now):
             continue
 
+        c_start = time.perf_counter()
         distance, closing_speed, risk_level, ttc = compute_collision_risk(data, other_data)
+        metrics.collision_physics.record((time.perf_counter() - c_start) * 1000.0)
+        metrics.inc_collision_checks()
 
         # Check for High-Priority Emergency Vehicle Proximity Preemption
         is_emergency = (data.get('vehicle_type') == 'Emergency' or data.get('emergency_status') == 1 or
@@ -286,6 +295,8 @@ def process_telemetry_payload(payload_str: str, client=None, loop=None):
             "route_info": route_info
         }
         asyncio.run_coroutine_threadsafe(message_queue.put(event), loop)
+
+    metrics.telemetry_pipeline.record((time.perf_counter() - t_start) * 1000.0)
 
 def publish_or_dispatch(topic: str, payload_str: str):
     """

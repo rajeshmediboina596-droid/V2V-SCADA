@@ -355,7 +355,11 @@ function connect() {
     ws.onclose = () => {
         const el = document.getElementById('connectionStatus');
         el.className = 'status-badge disconnected';
-        el.querySelector('.status-text').textContent = 'Reconnecting...';
+        el.querySelector('.status-text').textContent = 'DISCONNECTED (Retrying...)';
+        document.querySelectorAll('.v-status-pill').forEach(p => {
+            p.className = 'v-status-pill disconnected';
+            p.textContent = 'DISCONNECTED';
+        });
         setTimeout(connect, 2500);
     };
 
@@ -372,6 +376,7 @@ function connect() {
         const alarms = new Map();
 
         messages.forEach(({ data, alarms: messageAlarms = [], route_info, toll_events = [] }) => {
+            data.localReceivedAt = Date.now();
             latestTelemetry.set(data.vehicle_id, data);
 
             // Handle Toll Events (Approach / Crossed)
@@ -547,7 +552,7 @@ function updateDashboard(data, alarms) {
 
     card.innerHTML = `
         <div class="card-header-row">
-            <span class="vid">${vid} <span style="font-size:0.65rem; color:#64748b;">(${data.vehicle_type || 'Car'})</span></span>
+            <span class="vid">${vid} <span style="font-size:0.65rem; color:#64748b;">(${data.vehicle_type || 'Car'})</span><span class="v-status-pill live">LIVE</span></span>
             <span class="vspeed" style="color:${markerColor}">
                 ${speedDisplay} <span style="font-size:0.55rem; opacity:0.6">km/h</span>
                 <span class="heading-arrow" style="transform:rotate(${heading}deg);">⬆</span>
@@ -561,6 +566,45 @@ function updateDashboard(data, alarms) {
         </div>
     `;
 }
+
+// Periodic Stale Telemetry Pruner & Visual Indicator (Runs every 2.5s)
+const STALE_TIMEOUT_MS = 15000;
+setInterval(() => {
+    const now = Date.now();
+    latestTelemetry.forEach((data, vid) => {
+        const ageMs = now - (data.localReceivedAt || now);
+        const card = document.getElementById(`card-${vid}`);
+        const marker = markers[vid];
+        if (ageMs > STALE_TIMEOUT_MS) {
+            const ageSec = Math.floor(ageMs / 1000);
+            if (card) {
+                card.classList.add('stale-card');
+                const pill = card.querySelector('.v-status-pill');
+                if (pill) {
+                    pill.className = 'v-status-pill stale';
+                    pill.textContent = `STALE (${ageSec}s)`;
+                }
+            }
+            if (marker && marker.getElement && marker.getElement()) {
+                marker.getElement().style.opacity = '0.45';
+                marker.getElement().style.filter = 'grayscale(80%)';
+            }
+        } else {
+            if (card) {
+                card.classList.remove('stale-card');
+                const pill = card.querySelector('.v-status-pill');
+                if (pill && pill.textContent !== 'LIVE') {
+                    pill.className = 'v-status-pill live';
+                    pill.textContent = 'LIVE';
+                }
+            }
+            if (marker && marker.getElement && marker.getElement()) {
+                marker.getElement().style.opacity = '1.0';
+                marker.getElement().style.filter = 'none';
+            }
+        }
+    });
+}, 2500);
 
 function updateDashboardMetrics() {
     document.getElementById('valTotalVehicles').textContent = totalVehicles.size;

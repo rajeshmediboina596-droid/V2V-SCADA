@@ -19,6 +19,8 @@ def _write_batch(entries):
     if not entries:
         return
 
+    import time
+    t0 = time.perf_counter()
     conn = sqlite3.connect(DB_PATH, timeout=15.0)
     cursor = conn.cursor()
     try:
@@ -81,6 +83,11 @@ def _write_batch(entries):
             ''', vehicle_updates)
 
         conn.commit()
+        try:
+            from backend.metrics import metrics
+            metrics.database_write.record((time.perf_counter() - t0) * 1000.0)
+        except Exception:
+            pass
     except Exception as e:
         print(f"[DB Error in batch write]: {e}")
     finally:
@@ -117,6 +124,7 @@ def init_db():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute('PRAGMA journal_mode=WAL')
+    cursor.execute('PRAGMA synchronous=NORMAL')
 
     # 1. Vehicles Directory
     cursor.execute('''
@@ -153,6 +161,7 @@ def init_db():
         received_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )''')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_telem_veh_time ON telemetry(vehicle_id, timestamp)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_telem_received_at ON telemetry(received_at)')
 
     # Automatic schema migration for telemetry table if created with older schema
     cursor.execute("PRAGMA table_info(telemetry)")
@@ -539,6 +548,28 @@ def log_translation(session_id, source_lang, target_lang, speaker_type, original
             ) VALUES (?, ?, ?, ?, ?, ?)
         ''', (session_id, source_lang, target_lang, speaker_type, original, translated))
         conn.commit()
+    finally:
+        conn.close()
+
+def prune_old_telemetry(retention_hours: int = 48) -> int:
+    """
+    Prunes telemetry rows older than the specified retention window (default 48h)
+    to prevent unbounded SQLite file growth during continuous testing.
+    Returns the count of pruned rows.
+    """
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "DELETE FROM telemetry WHERE received_at < datetime('now', '-' || ? || ' hours')",
+            (retention_hours,)
+        )
+        deleted = cursor.rowcount
+        conn.commit()
+        return deleted
+    except Exception as e:
+        print(f"[DB Retention Cleanup Error]: {e}")
+        return 0
     finally:
         conn.close()
 

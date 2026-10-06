@@ -12,8 +12,15 @@ import json
 import math
 import random
 import sqlite3
+import logging
 from pathlib import Path
 from typing import Optional, Dict, Any, List
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] [%(name)s]: %(message)s"
+)
+logger = logging.getLogger("v2v_backend")
 
 # Ensure backend can import sibling modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -36,6 +43,7 @@ from backend.mqtt_client import (
 from backend.report_generator import generate_pdf_report
 from backend.translation import translate_message, SUPPORTED_LANGUAGES
 from backend.security import generate_signature, verify_telemetry_packet
+from backend.metrics import metrics
 from backend.call_service import call_manager
 from backend.providers.factory import (
     get_telephony_provider,
@@ -88,6 +96,7 @@ async def broadcast_messages():
         if not connected_clients:
             continue
 
+        t_ws = time.perf_counter()
         dead_clients = set()
         for client in connected_clients:
             try:
@@ -97,6 +106,8 @@ async def broadcast_messages():
 
         for client in dead_clients:
             connected_clients.remove(client)
+
+        metrics.websocket_push.record((time.perf_counter() - t_ws) * 1000.0)
 
 @app.get("/")
 async def get_index():
@@ -207,6 +218,14 @@ async def get_system_health():
         }
     }
 
+@app.get("/api/metrics")
+async def get_performance_metrics():
+    """
+    Returns non-blocking performance profiling metrics across the telemetry pipeline.
+    Categorizes dimensions into DESIGN TARGET, MEASURED, and NOT MEASURED.
+    """
+    return metrics.get_summary()
+
 # ------------------------------------------------------------------------------
 # Vehicles & Telemetry APIs
 # ------------------------------------------------------------------------------
@@ -218,8 +237,8 @@ async def get_active_vehicles():
     }
 
 class TelemetryPayload(BaseModel):
-    vehicle_id: str
-    vehicle_type: str = "Passenger"
+    vehicle_id: str = Field(min_length=1, max_length=32, description="Vehicle ID")
+    vehicle_type: str = Field(default="Passenger", max_length=20)
     timestamp: int
     seq: int = Field(ge=0, description="Monotonically increasing sequence number")
     lat: float = Field(ge=-90.0, le=90.0, description="Latitude in degrees")
@@ -232,9 +251,9 @@ class TelemetryPayload(BaseModel):
     yaw_deg: float = Field(default=0.0, ge=0.0, le=360.0)
     battery_level: float = Field(default=100.0, ge=0.0, le=100.0)
     emergency_status: int = Field(default=0, ge=0, le=1)
-    rf_status: str = "OK"
-    fault_code: str = "NONE"
-    signature: str
+    rf_status: str = Field(default="OK", max_length=16)
+    fault_code: str = Field(default="NONE", max_length=32)
+    signature: str = Field(min_length=64, max_length=64, description="HMAC-SHA256 hex signature")
 
 @app.post("/api/telemetry")
 async def ingest_telemetry(payload: TelemetryPayload):

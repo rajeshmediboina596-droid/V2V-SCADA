@@ -135,7 +135,15 @@ def verify_telemetry_packet(
         log_security_event("MISSING_SIGNATURE", vid, "Packet missing HMAC signature", payload_str[:100])
         return False, data, "MISSING_SIGNATURE"
 
-    vid = str(data.get("vehicle_id", "UNKNOWN")).strip()
+    vid = str(data.get("vehicle_id", "")).strip()
+    if len(vid) == 0 or len(vid) > 32:
+        log_security_event("INVALID_VEHICLE_ID", vid or "UNKNOWN", "Vehicle ID length must be between 1 and 32 characters", payload_str[:100])
+        return False, data, "INVALID_VEHICLE_ID"
+
+    if len(str(msg_sig)) != 64:
+        log_security_event("INVALID_SIGNATURE_LENGTH", vid, "HMAC-SHA256 signature must be exactly 64 hex characters", payload_str[:100])
+        return False, data, "INVALID_SIGNATURE_LENGTH"
+
     now = time.time()
 
     # 1. Type & Range Validation for Security Fields

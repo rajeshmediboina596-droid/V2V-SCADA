@@ -1,0 +1,39 @@
+name: V2V-SCADA Continuous Integration & Quality Gate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Backend Test & Security Suite
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Python Syntax & Compilation Verification
+        run: |
+          python -m compileall -q backend/ ml/ stm32/ tests/
+
+      - name: Run Pytest Test Suite
+        env:
+          ENVIRONMENT: test
+          DEMO_MODE: "false"
+          HMAC_SECRET: "ci_pipeline_test_secret_32_characters_long_ok"
+        run: |
+          pytest tests/ -v

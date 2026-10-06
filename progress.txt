@@ -1,0 +1,21 @@
+# progress.txt - V2V-SCADA Continuous Task Log
+
+[2026-10-06 15:02] Phase 0 completed. Baseline tests verified: 21/21 pytest passed, voice call test passed.
+[2026-10-06 15:02] Created GSD_PLAN.md covering all 17 phases.
+[2026-10-06 15:03] Phase 1 completed: Authored docs/REQUIREMENTS_MATRIX.md (21 subsystems classified).
+[2026-10-06 15:05] Phase 2 completed: End-to-end telemetry packet audit (STM32 -> SX1281 -> Serial -> MQTT -> FastAPI -> SQLite -> WebSocket -> SCADA).
+[2026-10-06 15:07] Phase 3 completed: Canonical Telemetry Contract defined in docs/CANONICAL_TELEMETRY_CONTRACT.md; 11 contract tests passing in tests/test_canonical_contract.py.
+[2026-10-06 15:08] Phase 4 completed: 16 deterministic collision scenarios implemented in tests/test_collision_scenarios.py (16/16 passed).
+[2026-10-06 15:09] Phase 5 completed: Failure/Recovery matrix documented in docs/FAILURE_AND_RECOVERY_MATRIX.md; 9 automated tests passing in tests/test_failure_recovery.py; AEB relay fail-safe LOW state verified.
+[2026-10-06 15:10] Phase 6 completed: MQTT reliability documented in docs/MQTT_RELIABILITY_SPEC.md; 4 automated tests passing in tests/test_mqtt_reliability.py.
+[2026-10-06 15:13] Phase 7 completed: Non-blocking performance profiler implemented in backend/metrics.py, wired into telemetry pipeline, database, and websocket; GET /api/metrics endpoint added; docs/PERFORMANCE_BENCHMARK_SPEC.md created.
+[2026-10-06 15:15] Phase 8 completed: 17 security regression tests passing in tests/test_security_regressions.py; length bounds enforced on TelemetryPayload; proven that rejected packets cannot enter vehicle_states.
+[2026-10-06 15:17] Phase 9 completed: Structured logging configured with standard levels; secret leaks audited (zero secrets logged).
+[2026-10-06 15:18] Phase 10 completed: SCADA HUD reliability updated in frontend/js/app.js & style.css with LIVE / STALE (>15s) / DISCONNECTED status indicators and marker dimming.
+[2026-10-06 15:19] Phase 11 completed: SQLite WAL & synchronous=NORMAL verified; idx_telem_received_at added; prune_old_telemetry retention function implemented.
+[2026-10-06 15:20] Phase 12 completed: Hardware interface specification created in docs/HARDWARE_INTERFACE_SPEC.md.
+[2026-10-06 15:21] Phase 13 completed: Simulator upgraded with deterministic scenario presets (head_on, crossing, following, emergency, geofence) and SIMULATED data source tag.
+[2026-10-06 15:21] Phase 14 completed: GitHub Actions CI workflow created in .github/workflows/ci.yml.
+[2026-10-06 15:22] Phase 15 completed: Feature classification audit completed in docs/FEATURE_CLASSIFICATION_REPORT.md.
+[2026-10-06 15:23] Phase 16 completed: Hardware validation plan created in docs/HARDWARE_VALIDATION_PLAN.md with 17 test protocols.
+[2026-10-06 15:24] Phase 17 completed: Full test suite executed: 78/78 tests passed, compileall passed, live API/WebSocket verified. Ready for commit.
