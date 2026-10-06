@@ -5,12 +5,12 @@
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-rajeshmediboina596--droid%2FV2V--SCADA-181717.svg?style=for-the-badge&logo=github)](https://github.com/rajeshmediboina596-droid/V2V-SCADA)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
-[![Hardware: STM32F103 | SX1281 2.4GHz](https://img.shields.io/badge/Hardware-STM32%20%7C%20SX1281%202.4GHz-brightgreen.svg?style=for-the-badge)](#5-hardware-wiring--pin-assignment-table)
-[![Standards: MoRTH AIS-230 Aligned](https://img.shields.io/badge/Standard-MoRTH%20AIS--230%20Concepts-orange.svg?style=for-the-badge)](#12-morth-ais-230-regulatory-alignment--standards-context)
+[![Hardware: STM32F103 | SX1281 2.4GHz](https://img.shields.io/badge/Hardware-STM32%20%7C%20SX1281%202.4GHz-brightgreen.svg?style=for-the-badge)](#5-hardware-wiring-pin-assignment-table)
+[![Standards: MoRTH AIS-230 Aligned](https://img.shields.io/badge/Standard-MoRTH%20AIS--230%20Concepts-orange.svg?style=for-the-badge)](#12-morth-ais-230-regulatory-alignment-standards-context)
 [![Voice HUD: 12 Indian Languages](https://img.shields.io/badge/Voice%20Dispatch-12%20Indian%20Languages-purple.svg?style=for-the-badge)](#8-real-time-multi-indian-language-voice-call-translator-module)
-[![Backend: FastAPI / WebSockets](https://img.shields.io/badge/Backend-FastAPI%20%7C%20WebSockets%20%7C%20MQTT-009688.svg?style=for-the-badge)](#6-software-stack--dependencies)
-[![Security: HMAC-SHA256 Anti-Replay](https://img.shields.io/badge/Security-HMAC--SHA256%20%7C%20Anti--Replay-red.svg?style=for-the-badge)](#11-cyber-security--anti-replay-cryptographic-engine)
-[![Tests: 78/78 Pytest Passed](https://img.shields.io/badge/Tests-78%2F78%20Pytest%20Passed%20(6%20Suites)-success.svg?style=for-the-badge)](#17-testing-benchmarking--verification)
+[![Backend: FastAPI / WebSockets](https://img.shields.io/badge/Backend-FastAPI%20%7C%20WebSockets%20%7C%20MQTT-009688.svg?style=for-the-badge)](#6-software-stack-dependencies)
+[![Security: HMAC-SHA256 Anti-Replay](https://img.shields.io/badge/Security-HMAC--SHA256%20%7C%20Anti--Replay-red.svg?style=for-the-badge)](#11-cyber-security-anti-replay-cryptographic-engine)
+[![Tests: 78/78 Pytest Passed](https://img.shields.io/badge/Tests-78%2F78%20Pytest%20Passed%20(6%20Suites)-success.svg?style=for-the-badge)](#17-testing-benchmarking-verification)
 [![CI: GitHub Actions](https://img.shields.io/badge/CI-GitHub%20Actions%20Passing-2088FF.svg?style=for-the-badge&logo=githubactions&logoColor=white)](.github/workflows/ci.yml)
 [![Contract: Canonical v1.0](https://img.shields.io/badge/Contract-Canonical%20v1.0-blueviolet.svg?style=for-the-badge)](docs/CANONICAL_TELEMETRY_CONTRACT.md)
 
@@ -18,15 +18,15 @@
   <b>An academic engineering prototype demonstrating cellular-independent Vehicle-to-Vehicle (V2V) cooperative collision avoidance, emergency voice dispatch, and intelligent highway SCADA telemetry monitoring.</b>
 </p>
 
-[ 🚀 Quickstart ](#16-installation--step-by-step-execution-guide) •
+[ 🚀 Quickstart ](#16-installation-step-by-step-execution-guide) •
 [ 🏗️ Architecture ](#3-end-to-end-system-architecture) •
 [ 📋 Requirements Matrix ](docs/REQUIREMENTS_MATRIX.md) •
 [ 📜 Telemetry Contract ](docs/CANONICAL_TELEMETRY_CONTRACT.md) •
-[ 🔌 Pinout & Hardware ](#5-hardware-wiring--pin-assignment-table) •
-[ 🛡️ Cybersecurity ](#11-cyber-security--anti-replay-cryptographic-engine) •
-[ 🧪 Test Suite (78 Tests) ](#17-testing-benchmarking--verification) •
+[ 🔌 Pinout & Hardware ](#5-hardware-wiring-pin-assignment-table) •
+[ 🛡️ Cybersecurity ](#11-cyber-security-anti-replay-cryptographic-engine) •
+[ 🧪 Test Suite (78 Tests) ](#17-testing-benchmarking-verification) •
 [ 🔬 Hardware Plan ](docs/HARDWARE_VALIDATION_PLAN.md) •
-[ ⚠️ Limitations ](#18-prototype-limitations--engineering-caveats)
+[ ⚠️ Limitations ](#18-prototype-limitations-engineering-caveats)
 
 </div>
 
@@ -54,26 +54,26 @@ Every claim and technical metric in this repository is explicitly tagged to indi
 ---
 
 ## Table of Contents
-1. [Executive Summary & Abstract](#1-executive-summary--abstract)
-2. [Problem Statement & Engineered Architecture](#2-problem-statement--engineered-architecture)
+1. [Executive Summary & Abstract](#1-executive-summary-abstract)
+2. [Problem Statement & Engineered Architecture](#2-problem-statement-engineered-architecture)
 3. [End-to-End System Architecture](#3-end-to-end-system-architecture)
-4. [Hardware Requirements & Bill of Materials (BOM)](#4-hardware-requirements--bill-of-materials-bom)
-5. [Hardware Wiring & Pin Assignment Table](#5-hardware-wiring--pin-assignment-table)
-6. [Software Stack & Dependencies](#6-software-stack--dependencies)
-7. [Mathematical & Algorithmic Formulation](#7-mathematical--algorithmic-formulation)
+4. [Hardware Requirements & Bill of Materials (BOM)](#4-hardware-requirements-bill-of-materials-bom)
+5. [Hardware Wiring & Pin Assignment Table](#5-hardware-wiring-pin-assignment-table)
+6. [Software Stack & Dependencies](#6-software-stack-dependencies)
+7. [Mathematical & Algorithmic Formulation](#7-mathematical-algorithmic-formulation)
 8. [Real-Time Multi-Indian-Language Voice Call Translator Module](#8-real-time-multi-indian-language-voice-call-translator-module)
-9. [Highway Infrastructure (V2I) & Tollgate Awareness Module](#9-highway-infrastructure-v2i--tollgate-awareness-module)
-10. [AIS-230 Telemetry Packet Specification](#10-ais-230-telemetry-packet-specification)
-11. [Cyber-Security & Anti-Replay Cryptographic Engine](#11-cyber-security--anti-replay-cryptographic-engine)
-12. [MoRTH AIS-230 Regulatory Alignment & Standards Context](#12-morth-ais-230-regulatory-alignment--standards-context)
+9. [Highway Infrastructure (V2I) & Tollgate Awareness Module](#9-highway-infrastructure-v2i-tollgate-awareness-module)
+10. [Canonical Telemetry Contract & AIS-230 Specification](#10-canonical-telemetry-contract-ais-230-specification)
+11. [Cyber-Security & Anti-Replay Cryptographic Engine](#11-cyber-security-anti-replay-cryptographic-engine)
+12. [MoRTH AIS-230 Regulatory Alignment & Standards Context](#12-morth-ais-230-regulatory-alignment-standards-context)
 13. [Database Architecture (SQLite WAL Mode)](#13-database-architecture-sqlite-wal-mode)
-14. [REST API & WebSocket Protocol Reference](#14-rest-api--websocket-protocol-reference)
+14. [REST API & WebSocket Protocol Reference](#14-rest-api-websocket-protocol-reference)
 15. [Repository Directory Structure](#15-repository-directory-structure)
-16. [Installation & Step-by-Step Execution Guide](#16-installation--step-by-step-execution-guide)
-17. [Testing, Benchmarking & Verification](#17-testing-benchmarking--verification)
-18. [Prototype Limitations & Engineering Caveats](#18-prototype-limitations--engineering-caveats)
-19. [Troubleshooting & Gotchas](#19-troubleshooting--gotchas)
-20. [License & Attribution](#20-license--attribution)
+16. [Installation & Step-by-Step Execution Guide](#16-installation-step-by-step-execution-guide)
+17. [Testing, Benchmarking & Verification](#17-testing-benchmarking-verification)
+18. [Prototype Limitations & Engineering Caveats](#18-prototype-limitations-engineering-caveats)
+19. [Troubleshooting & Gotchas](#19-troubleshooting-gotchas)
+20. [License & Attribution](#20-license-attribution)
 
 ---
 
@@ -191,9 +191,9 @@ To build a **2-Vehicle + 1-Gateway Testbed**, three physical STM32 microcontroll
 | **7** | **Acoustic Warning Alarm** | **5V Active Piezo Buzzer Module** | Emits a high-decibel audible alarm when Time-to-Collision (TTC) drops below 3.0 seconds. | **2 pcs** |
 | **8** | **Hazard Warning LEDs** | **5mm LEDs (Red, Yellow, Green) + 220Ω Resistors** | Multi-tiered visual indicators for Safe (Green), Caution (Yellow), and Imminent Collision (Red). | **2 sets** |
 | **9** | **AEB Braking Simulator** | **5V 1-Channel Relay Module (Optocoupler-Isolated)** | Simulates Automatic Emergency Braking (AEB) solenoid activation or emergency hazard lights. | **2 pcs** |
-| **10** | **Automotive Buck Converter**| **LM2596 or MP1584EN Step-Down Module** | Converts car 12V/24V electrical bus down to clean 5V DC (3A max). | **2 pcs** |
+| **10** | **Automotive Buck Converter** | **LM2596 or MP1584EN Step-Down Module** | Converts car 12V/24V electrical bus down to clean 5V DC (3A max). | **2 pcs** |
 | **11** | **Dedicated 3.3V LDO Rail** | **AMS1117-3.3V Voltage Regulator Board (800mA–1A)** | **CRITICAL**: The Blue Pill onboard regulator supplies only ~100mA. The SX1281 draws up to 120mA during TX. This dedicated rail powers the radio and sensors, eliminating brownout resets. | **3 pcs** |
-| **12** | **USB-to-UART Serial Bridge**| **CP2102 or FT232RL USB-to-UART Module** | **Dual Purpose**: (1) Flashes STM32 firmware via built-in ROM bootloader (BOOT0=1 on USART1 PA9/PA10) with **zero ST-Link required**; (2) Bridges the Gateway RSU to the SCADA laptop at 115200 baud. | **1 pc** |
+| **12** | **USB-to-UART Serial Bridge** | **CP2102 or FT232RL USB-to-UART Module** | **Dual Purpose**: (1) Flashes STM32 firmware via built-in ROM bootloader (BOOT0=1 on USART1 PA9/PA10) with **zero ST-Link required**; (2) Bridges the Gateway RSU to the SCADA laptop at 115200 baud. | **1 pc** |
 | **13** | **Field Battery Supply** | **18650 3.7V Li-ion Cells (2500mAh) + TP4056 USB-C Charger** | Enables portable bench and vehicle field testing. | **2 sets** |
 | **14** | **Prototyping & Wiring** | **Breadboards, Dupont Cables, 4.7kΩ I2C Pullups, 100µF Caps** | Bus wiring, signal integrity decoupling, and breadboard setup. | **1 kit** |
 
@@ -208,26 +208,28 @@ The table below details all hardware pin assignments for the **STM32F103C8T6 (Bl
                       |   STM32F103C8T6   |
                       |    (BLUE PILL)    |
                       +-------------------+
-             (Reset) -| NRST         VBAT |- (Battery Backup)
-        (Status LED) -| PC13          PC15|- (OSC32 Out)
-        (Crystal In) -| PC14          PC14|- (OSC32 In)
-       (Crystal Out) -| OSCIN        OSCOUT|- (OSC Out)
-          (SX1281 CS)-| PA4            PA0 |-(Reserved / ADC)
-         (SX1281 SCK)-| PA5            PA1 |-(Status LED Green)
-        (SX1281 MISO)-| PA6            PA2 |-(NEO-M8N GPS TX)
-        (SX1281 MOSI)-| PA7            PA3 |-(NEO-M8N GPS RX)
-         (Alert LED) -| PA8            PA9 |-(CP2102 USART1 TX / Flash TX)
-        (CP2102 RX)  -| PA10           PA10|-(CP2102 USART1 RX / Flash RX)
-         (USB D-)    -| PA11           PA12|-(USB D+)
-        (Free GPIO)  -| PA13           PA14|-(Free GPIO)
-                      | PB0 (SX1281 DIO1)  |
-                      | PB1 (SX1281 RST)   |
-                      | PB6 (I2C1 SCL - BNO055 & OLED) |
-                      | PB7 (I2C1 SDA - BNO055 & OLED) |
-                      | PB8 (Active Piezo Buzzer)     |
-                      | PB9 (AEB Relay Module Trigger) |
-                      | PB10 (SX1281 BUSY Interrupt)  |
-                      | BOOT0: Jumper to 3.3V to Flash, GND to Run |
+  (Backup Battery) -| VBAT           3.3V |- (VCC 3.3V Out)
+   (Onboard LED)   -| PC13           GND  |- (Ground)
+  (OSC32 In 32kHz) -| PC14           5V   |- (5V In / USB Power)
+  (OSC32 Out 32kHz)-| PC15           PB9  |- (AEB Relay Trigger)
+      (ADC / Free) -| PA0            PB8  |- (Piezo Buzzer Alarm)
+  (Status LED Grn) -| PA1            PB7  |- (I2C1 SDA - BNO055/OLED)
+  (NEO-M8N GPS TX) -| PA2            PB6  |- (I2C1 SCL - BNO055/OLED)
+  (NEO-M8N GPS RX) -| PA3            PB5  |- (Free GPIO)
+       (SX1281 CS) -| PA4            PB4  |- (Free GPIO)
+      (SX1281 SCK) -| PA5            PB3  |- (Free GPIO)
+     (SX1281 MISO) -| PA6            PA15 |- (Free GPIO)
+     (SX1281 MOSI) -| PA7            PA12 |- (USB D+)
+     (SX1281 DIO1) -| PB0            PA11 |- (USB D-)
+      (SX1281 RST) -| PB1            PA10 |- (CP2102 TX -> USART1 RX)
+     (SX1281 BUSY) -| PB10           PA9  |- (CP2102 RX <- USART1 TX)
+      (Free GPIO)  -| PB11           PA8  |- (Threat Alert LED Red)
+     (NRST Button) -| NRST           PB15 |- (Free GPIO)
+       (3.3V Rail) -| 3.3V           PB14 |- (Free GPIO)
+          (Ground) -| GND            PB13 |- (Free GPIO)
+          (Ground) -| GND            PB12 |- (Free GPIO)
+                      +-------------------+
+                      | BOOT0: 1=Flash, 0=Run |
                       +-------------------+
 ```
 
@@ -246,14 +248,14 @@ The table below details all hardware pin assignments for the **STM32F103C8T6 (Bl
 | **U-blox NEO-M8N / 6M** | **TX** | **PA3** | 3.3V | USART2 RX (NMEA Sentence Stream @ 9600/38400) |
 | **U-blox NEO-M8N / 6M** | **RX** | **PA2** | 3.3V | USART2 TX (UBX Configuration Commands) |
 | **U-blox NEO-M8N / 6M** | **VCC / GND** | **5V / GND** | 5V | Regulated 5V Power Rail |
-| **Bosch BNO055 / MPU6050**| **SCL** | **PB6** | 3.3V | I2C1 Clock (with 4.7kΩ pullup to 3.3V) |
-| **Bosch BNO055 / MPU6050**| **SDA** | **PB7** | 3.3V | I2C1 Data (with 4.7kΩ pullup to 3.3V) |
+| **Bosch BNO055 / MPU6050** | **SCL** | **PB6** | 3.3V | I2C1 Clock (with 4.7kΩ pullup to 3.3V) |
+| **Bosch BNO055 / MPU6050** | **SDA** | **PB7** | 3.3V | I2C1 Data (with 4.7kΩ pullup to 3.3V) |
 | **SSD1306 128x64 OLED** | **SCL / SDA** | **PB6 / PB7** | 3.3V | Shared I2C1 Bus (Address `0x3C`) |
 | **Active Piezo Buzzer** | **Signal (+)** | **PB8** | 3.3V–5V | Audible Collision Alarm (PWM / Digital High) |
 | **AEB Relay Module** | **IN1** | **PB9** | 5V (Opto) | Emergency Braking Solenoid Simulation |
 | **Threat Alert LED** | **Anode (+)** | **PA8** | 3.3V (220Ω) | Red Visual Warning Indicator |
 | **Network Status LED** | **Anode (+)** | **PA1** | 3.3V (220Ω) | Green RF Heartbeat Pulse |
-| **CP2102 Serial Bridge** | **TX / RX** | **PA9 / PA10** | 3.3V | Dual-Role: Built-in Bootloader Flashing & SCADA Gateway @ 115200 Baud |
+| **CP2102 Serial Bridge** | **TX / RX** | **PA10 / PA9** | 3.3V | Dual-Role: Built-in Flashing (BOOT0=1) & SCADA Gateway @ 115200 Baud (CP2102 TX ➔ PA10 RX, CP2102 RX  PA9 TX) |
 | **Boot Mode Jumpers** | **BOOT0 / BOOT1** | **Onboard Headers** | 3.3V / GND | Set BOOT0=1 to Flash via CP2102, BOOT0=0 to Run |
 
 ---
