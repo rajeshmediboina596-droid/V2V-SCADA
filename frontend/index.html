@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V2V SCADA HUD</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>V2V SCADA HUD — Real-Time Vehicle Safety & Highway Monitoring</title>
+    <meta name="description" content="AIS-230 compliant Internet-Independent V2V Communication and SCADA Safety Monitoring System with STM32, SX1281 RF, orientation sensing, and highway tollgate services.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -12,124 +15,441 @@
 <body>
     <div class="weather-overlay"></div>
     <div id="map" class="fullscreen-map"></div>
-    
+
+    <!-- Tollgate Crossed Toast Notification Modal -->
+    <div id="tollgateCrossedModal" class="toll-crossed-modal hidden">
+        <div class="toll-modal-content glass-hud">
+            <div class="toll-modal-header">
+                <span class="toll-badge-icon">🏛️</span>
+                <div>
+                    <h2 class="toll-modal-title">TOLLGATE CROSSED</h2>
+                    <span id="tollModalTime" class="toll-modal-time">--:--:--</span>
+                </div>
+                <button id="closeTollModal" class="btn-close" aria-label="Close">&times;</button>
+            </div>
+            <div class="toll-modal-body">
+                <div class="toll-field-row"><span class="toll-lbl">Toll ID:</span><span id="tollModalId" class="toll-val highlight">TG-DEMO</span></div>
+                <div class="toll-field-row"><span class="toll-lbl">Tollgate:</span><span id="tollModalName" class="toll-val">Patancheru Toll Plaza</span></div>
+                <div class="toll-field-row"><span class="toll-lbl">Highway:</span><span id="tollModalHighway" class="toll-val">NH-65 (Hyderabad - Pune)</span></div>
+                <div class="toll-field-row"><span class="toll-lbl">Location:</span><span id="tollModalLocation" class="toll-val">17.5338° N, 78.2644° E</span></div>
+                <div class="toll-field-row"><span class="toll-lbl">Nearby Hospital:</span><span id="tollModalHospital" class="toll-val">Government Area Hospital</span></div>
+                <div class="toll-field-row"><span class="toll-lbl">Nearby Police:</span><span id="tollModalPolice" class="toll-val">Patancheru Police Station (100)</span></div>
+            </div>
+            <div class="toll-modal-actions">
+                <button id="tollModalCallBtn" class="btn-hud primary toll-call-link">📞 Call Tollgate (<span id="tollModalPhone">+91-40-23001234</span>)</button>
+                <a href="tel:1033" class="btn-hud danger">🚨 NHAI Helpline (1033)</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Multi-Indian-Language Voice Call Full HUD Modal -->
+    <div id="liveCallModal" class="toll-crossed-modal hidden">
+        <div class="call-modal-content glass-hud">
+            <div class="call-modal-header">
+                <div class="call-header-left">
+                    <span class="call-badge-icon pulse-glow">🎙️</span>
+                    <div>
+                        <h2 class="call-modal-title">EMERGENCY VOICE CALL — LIVE TRANSLATION</h2>
+                        <div class="call-modal-meta">
+                            <span id="modalCallStatus" class="call-status-tag active">CALL ACTIVE</span>
+                            <span id="modalCallTimer" class="call-timer-text">00:00</span>
+                            <span class="call-tech-tag">WebRTC Low-Latency Voice Channel</span>
+                            <span id="modalOfflineTag" class="call-offline-tag safe">100% Local V2V Safe</span>
+                        </div>
+                    </div>
+                </div>
+                <button id="closeCallModal" class="btn-close" aria-label="Minimize Call HUD">&times;</button>
+            </div>
+
+            <!-- Emergency Incident Dossier Bar -->
+            <div class="call-dossier-bar">
+                <div class="dossier-pill"><span class="lbl">Tollgate:</span> <span id="dossierTollName" class="val highlight">TG-DEMO (Jubilee Hills)</span></div>
+                <div class="dossier-pill"><span class="lbl">Highway:</span> <span id="dossierHighway" class="val">NH-65 Corridor</span></div>
+                <div class="dossier-pill"><span class="lbl">Vehicle:</span> <span id="dossierVehicleId" class="val tech-font">DEMO-1</span></div>
+                <div class="dossier-pill"><span class="lbl">Location:</span> <span id="dossierLocation" class="val">17.4270° N, 78.4450° E</span></div>
+                <div class="dossier-pill"><span class="lbl">Incident:</span> <span id="dossierIncidentType" class="val warning-text">Roadside Crisis</span></div>
+                <button id="modalBtnShareDossier" class="btn-hud-small warning pulse-border" title="Share Incident Telemetry with Tollgate">📡 Share GPS Dossier</button>
+            </div>
+
+            <!-- Dual Participant Stream: Driver vs Operator -->
+            <div class="call-dual-stream-grid">
+                <!-- Driver Card -->
+                <div class="call-participant-card driver-card">
+                    <div class="participant-card-head">
+                        <div class="part-info">
+                            <span class="part-avatar">🚗</span>
+                            <div>
+                                <div class="part-title">Driver</div>
+                                <div class="part-sub" id="modalDriverVehId">Vehicle Unit: DEMO-1</div>
+                            </div>
+                        </div>
+                        <div class="part-lang-select-wrap">
+                            <label for="modalDriverLang">Language:</label>
+                            <select id="modalDriverLang" class="lang-select-sm">
+                                <option value="auto">✨ Auto Detect</option>
+                                <option value="te" selected>Telugu (తెలుగు)</option>
+                                <option value="hi">Hindi (हिन्दी)</option>
+                                <option value="ta">Tamil (தமிழ்)</option>
+                                <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                                <option value="ml">Malayalam (മലയാളം)</option>
+                                <option value="mr">Marathi (मराठी)</option>
+                                <option value="bn">Bengali (বাংলা)</option>
+                                <option value="gu">Gujarati (ગુજરાતી)</option>
+                                <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                                <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                                <option value="as">Assamese (অসমীয়া)</option>
+                                <option value="en">English</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="part-speech-stream">
+                        <div class="speech-box-title">Spoken Speech (Live STT):</div>
+                        <div id="modalDriverLiveSpeech" class="speech-live-text">Listening for driver voice...</div>
+                        <div class="speech-box-title" style="margin-top:8px;">Translated to Tollgate (<span id="modalDriverTgtLangLbl">Hindi</span>):</div>
+                        <div id="modalDriverTransText" class="speech-trans-text">---</div>
+                    </div>
+
+                    <div class="part-audio-indicator">
+                        <span class="audio-ind-label">Driver Mic Status:</span>
+                        <div id="driverWaveform" class="waveform-anim active"><span></span><span></span><span></span><span></span><span></span></div>
+                        <span id="driverMicStatusText" class="ind-status live">LIVE STREAMING</span>
+                    </div>
+                </div>
+
+                <!-- Tollgate Operator Card -->
+                <div class="call-participant-card operator-card">
+                    <div class="participant-card-head">
+                        <div class="part-info">
+                            <span class="part-avatar">🏛️</span>
+                            <div>
+                                <div class="part-title">Tollgate Operator</div>
+                                <div class="part-sub" id="modalOperatorPlazaId">Control Console: TG-DEMO</div>
+                            </div>
+                        </div>
+                        <div class="part-lang-select-wrap">
+                            <label for="modalOperatorLang">Language:</label>
+                            <select id="modalOperatorLang" class="lang-select-sm">
+                                <option value="auto">✨ Auto Detect</option>
+                                <option value="hi" selected>Hindi (हिन्दी)</option>
+                                <option value="te">Telugu (తెలుగు)</option>
+                                <option value="ta">Tamil (தமிழ்)</option>
+                                <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                                <option value="ml">Malayalam (മലയാളം)</option>
+                                <option value="mr">Marathi (मराठी)</option>
+                                <option value="bn">Bengali (বাংলা)</option>
+                                <option value="gu">Gujarati (ગુજરાતી)</option>
+                                <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                                <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                                <option value="as">Assamese (অসমীয়া)</option>
+                                <option value="en">English</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="part-speech-stream">
+                        <div class="speech-box-title">Spoken Speech (Live STT):</div>
+                        <div id="modalOperatorLiveSpeech" class="speech-live-text">Awaiting operator reply...</div>
+                        <div class="speech-box-title" style="margin-top:8px;">Translated to Driver (<span id="modalOperatorTgtLangLbl">Telugu</span>):</div>
+                        <div id="modalOperatorTransText" class="speech-trans-text">---</div>
+                    </div>
+
+                    <div class="part-audio-indicator">
+                        <span class="audio-ind-label">Speaker / TTS Status:</span>
+                        <div id="operatorWaveform" class="waveform-anim idle"><span></span><span></span><span></span><span></span><span></span></div>
+                        <span id="operatorSpeakerStatusText" class="ind-status">READY</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full Call Transcript & Bubble History -->
+            <div class="call-transcript-container">
+                <div class="transcript-header">
+                    <span>CALL CONVERSATION TRANSCRIPT (Continuous Speech Relay)</span>
+                    <span id="callEngineBadge" class="engine-badge">Offline Indic Lexicon + Neural Online Engine</span>
+                </div>
+                <div id="modalCallTranscript" class="modal-transcript-feed">
+                    <!-- Real-time conversation bubbles populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Voice Controls & Testing Bar -->
+            <div class="call-modal-footer">
+                <div class="footer-left">
+                    <button id="modalBtnMute" class="btn-hud-small" title="Mute Microphone">🔇 Mute Mic</button>
+                    <button id="modalBtnSpeaker" class="btn-hud-small" title="Mute Incoming Speaker">🔊 Speaker Active</button>
+                    <button id="modalBtnRoleToggle" class="btn-hud-small primary" title="Switch between Driver and Operator speaking role">Role: Driver ⇄</button>
+                </div>
+                <div class="footer-center">
+                    <input type="text" id="modalSpeechInput" class="modal-speech-input" placeholder="Type or speak phrase in Indian language..." autocomplete="off">
+                    <button id="modalBtnSendTurn" class="btn-hud primary">Transmit Speech</button>
+                </div>
+                <div class="footer-right">
+                    <button id="modalBtnEndCall" class="btn-hud danger">🛑 End Call</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main HUD UI -->
     <div class="hud-overlay">
         
+        <!-- Top Navigation Bar -->
         <header class="hud-top-bar glass-hud">
             <div class="brand">
                 <div class="logo-glow"></div>
-                <h1>V2V SCADA HUD</h1>
+                <h1>V2V SCADA</h1>
+                <span class="badge-ais">AIS-230 STM32</span>
             </div>
             
             <div class="mode-switch">
                 <button id="modeLive" class="mode-btn active">LIVE FEED</button>
                 <button id="modeDemo" class="mode-btn">DEMO SIM</button>
             </div>
-            
+
             <div class="v2i-module">
-                <span class="label">V2I SPaT INTERCEPT</span>
-                <span class="value tech-font warning-text" id="v2i-signal">SIGNAL SYNCING...</span>
+                <span class="label">V2I SPaT Intercept</span>
+                <span class="value tech-font warning-text" id="v2i-signal">SYNCING...</span>
+            </div>
+
+            <div class="highway-module">
+                <span class="label">Active Highway</span>
+                <span class="value tech-font safe-text" id="activeHighwayLabel">NH-65 CORRIDOR</span>
             </div>
 
             <div class="global-metrics">
-                <div class="metric"><span class="label">VEHICLES</span><span id="valTotalVehicles" class="value">0</span></div>
-                <div class="metric"><span class="label">THREATS</span><span id="valActiveAlarms" class="value danger">0</span></div>
+                <div class="metric"><span class="label">Vehicles</span><span id="valTotalVehicles" class="value">0</span></div>
+                <div class="metric"><span class="label">Threats</span><span id="valActiveAlarms" class="value danger">0</span></div>
             </div>
+
+            <button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false">
+                <span class="theme-toggle-icon" aria-hidden="true"></span>
+                <span id="themeToggleLabel">Light mode</span>
+            </button>
+
             <div id="connectionStatus" class="status-badge disconnected">
                 <span class="pulse-dot"></span>
-                <span class="status-text">LINK LOST</span>
+                <span class="status-text">Connecting...</span>
             </div>
         </header>
 
+        <!-- Left HUD Sidebar -->
         <aside class="hud-left glass-hud">
             <nav class="hud-nav">
-                <button id="btnDemo" class="btn-hud warning">▶ RUN DEMO</button>
-                <button id="btnSpoof" class="btn-hud" style="border-color: var(--danger); color: var(--danger);">⚠️ SPOOF ATTACK</button>
-                <button id="btnExport" class="btn-hud primary">EXPORT PDF</button>
+                <button id="btnDemo" class="btn-hud warning">▶ Run Demo</button>
+                <button id="btnSpoof" class="btn-hud danger">⚠ Spoof Attack</button>
+                <button id="btnExport" class="btn-hud primary">📄 Export PDF</button>
             </nav>
 
-            <div class="hud-panel env-panel">
-                <h3>ENVIRONMENT</h3>
+            <!-- Highway Route & Next Tollgate Panel -->
+            <div class="hud-panel toll-status-panel">
+                <h3>🛣️ Highway Route &amp; Toll Services</h3>
                 <div class="env-metrics">
-                    <div class="env-row"><span>SURFACE</span><span class="value safe-text">DRY</span></div>
-                    <div class="env-row"><span>VISIBILITY</span><span class="value">CLEAR (98%)</span></div>
-                    <div class="env-row"><span>FRICTION (µ)</span><span class="value tech-font">0.85</span></div>
+                    <div class="env-row"><span>Highway</span><span id="currentHighway" class="value safe-text">NH-65 (Hyderabad)</span></div>
+                    <div class="env-row"><span>Next Toll</span><span id="nextTollName" class="value highlight">Jubilee Hills Plaza</span></div>
+                    <div class="env-row"><span>Distance to Toll</span><span id="nextTollDist" class="value warning-text">-- m</span></div>
+                    <div class="env-row"><span>Estimated ETA</span><span id="nextTollEta" class="value">-- s</span></div>
+                </div>
+                <div class="toll-quick-actions">
+                    <button id="btnCallNextToll" class="btn-hud-small primary">📞 Call Tollgate</button>
+                    <a href="tel:1033" class="btn-hud-small danger">🚨 NHAI 1033</a>
                 </div>
             </div>
 
+            <!-- Hardware Node Health & GNSS -->
             <div class="hud-panel gps-panel">
-                <h3>GNSS/GPS CONSTELLATION</h3>
+                <h3>📡 STM32 &amp; GNSS Constellation</h3>
                 <div class="env-metrics">
-                    <div class="env-row"><span>FIX TYPE</span><span class="value safe-text">RTK 3D-FIX</span></div>
-                    <div class="env-row"><span>SATELLITES</span><span id="gpsSats" class="value tech-font">14 LOCKED</span></div>
-                    <div class="env-row"><span>HDOP ACCURACY</span><span id="gpsHdop" class="value tech-font">± 0.05m</span></div>
+                    <div class="env-row"><span>Hardware</span><span class="value safe-text">STM32F103 + SX1281</span></div>
+                    <div class="env-row"><span>RF Link</span><span class="value safe-text">2.4GHz FLRC (10Hz)</span></div>
+                    <div class="env-row"><span>GNSS Satellites</span><span id="gpsSats" class="value">14 LOCKED</span></div>
+                    <div class="env-row"><span>HDOP Accuracy</span><span id="gpsHdop" class="value">± 0.05m</span></div>
                 </div>
             </div>
 
-            <div class="hud-panel platoon-panel">
-                <h3>PLATOONING COORDINATOR</h3>
-                <div class="platoon-status">
-                    <div class="env-row"><span>STATUS</span><span id="platoonState" class="value tech-font warning-text">SEARCHING...</span></div>
-                    <div class="env-row"><span>DRAFTING AERO</span><span id="platoonDrafting" class="value tech-font">0%</span></div>
-                </div>
-            </div>
-
+            <!-- Active Vehicular Units & Orientation HUD -->
             <div class="roster" style="flex:1;">
-                <h3>ACTIVE UNITS</h3>
+                <h3>Active Vehicular Nodes</h3>
                 <div id="vehicleCards" class="vehicle-cards"></div>
             </div>
 
+            <!-- Broadcast Uplink Terminal -->
             <div class="hud-panel terminal-panel">
-                <h3>BROADCAST UPLINK</h3>
+                <h3>V2X Broadcast Uplink</h3>
                 <div class="terminal-window">
                     <div id="terminalLog" class="terminal-log">
-                        <div>> SYSTEM READY</div>
-                        <div>> ENCRYPTION ENABLED</div>
+                        <div>&gt; STM32 V2V NETWORK ONLINE</div>
+                        <div>&gt; HMAC-SHA256 SIGNING ACTIVE</div>
+                        <div>&gt; TOLLGATE RADAR ARMED</div>
                     </div>
                     <div class="terminal-input-wrapper">
-                        <span class="prompt">></span>
-                        <input type="text" id="terminalInput" class="terminal-input" placeholder="Enter broadcast command..." autocomplete="off">
+                        <span class="prompt">&gt;</span>
+                        <input type="text" id="terminalInput" class="terminal-input" placeholder="Broadcast command..." autocomplete="off">
                     </div>
                 </div>
             </div>
         </aside>
 
+        <!-- Right HUD Sidebar -->
         <aside class="hud-right glass-hud">
+            <!-- Threat Detection & TTC Collision Alarms -->
             <div class="hud-panel">
-                <h3>THREAT DETECTION</h3>
+                <h3>Collision &amp; Hazard Radar</h3>
                 <ul id="alarmList" class="alarm-list">
-                    <li class="no-alarms">System Safe</li>
+                    <li class="no-alarms">System Safe — No Active Hazards</li>
                 </ul>
             </div>
-            
-            <div class="hud-panel net-panel">
-                <h3>NETWORK INTEGRITY</h3>
-                <div class="net-stats">
-                    <div class="net-box">
-                        <span class="label">AVG LATENCY</span>
-                        <span id="valLatency" class="value tech-font warning-text">-- ms</span>
+
+            <!-- Real-Time Multi-Indian-Language Live Translation Call Panel -->
+            <div class="hud-panel live-call-panel" id="liveCallPanel">
+                <div class="panel-header-with-badge">
+                    <h3>📞 Live Call Translator</h3>
+                    <span id="callStatusBadge" class="call-badge idle">STANDBY</span>
+                </div>
+                <p class="panel-subtitle">Continuous Multi-Indian-Language Voice Relay</p>
+
+                <!-- Tollgate Association & Contact Info Bar -->
+                <div class="call-tollgate-summary">
+                    <div class="summary-line"><span class="sum-lbl">Tollgate:</span> <span id="callTollName" class="sum-val highlight">TG-DEMO (Jubilee Hills)</span></div>
+                    <div class="summary-line"><span class="sum-lbl">Highway:</span> <span id="callHighway" class="sum-val">NH-65 Bypass</span> | <span class="sum-lbl">Dist:</span> <span id="callTollDist" class="sum-val warning-text">-- m</span></div>
+                    <div class="summary-line"><span class="sum-lbl">Vehicle:</span> <span id="callVehicleId" class="sum-val tech-font">DEMO-1</span> | <span class="sum-lbl">Loc:</span> <span id="callVehicleLoc" class="sum-val">17.4270° N, 78.4450° E</span></div>
+                </div>
+
+                <!-- Language Selection Controls with Auto Detect for 12 Indian Languages -->
+                <div class="trans-controls-grid">
+                    <div class="lang-selector-group">
+                        <label for="driverLangSelect">Driver Language:</label>
+                        <select id="driverLangSelect" class="lang-select">
+                            <option value="auto">✨ Auto Detect</option>
+                            <option value="te" selected>Telugu (తెలుగు)</option>
+                            <option value="hi">Hindi (हिन्दी)</option>
+                            <option value="ta">Tamil (தமிழ்)</option>
+                            <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                            <option value="ml">Malayalam (മലയാളം)</option>
+                            <option value="mr">Marathi (मराठी)</option>
+                            <option value="bn">Bengali (বাংলা)</option>
+                            <option value="gu">Gujarati (ગુજરાતી)</option>
+                            <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                            <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                            <option value="as">Assamese (অসমীয়া)</option>
+                            <option value="en">English</option>
+                        </select>
                     </div>
-                    <div class="net-box">
-                        <span class="label">CRYPTO (HMAC)</span>
-                        <span class="value safe-text">VERIFIED</span>
-                    </div>
-                    <div class="net-box">
-                        <span class="label">PACKET DROP</span>
-                        <span class="value tech-font safe-text">0.0%</span>
+                    <div class="lang-selector-group">
+                        <label for="operatorLangSelect">Operator Language:</label>
+                        <select id="operatorLangSelect" class="lang-select">
+                            <option value="auto">✨ Auto Detect</option>
+                            <option value="hi" selected>Hindi (हिन्दी)</option>
+                            <option value="te">Telugu (తెలుగు)</option>
+                            <option value="ta">Tamil (தமிழ்)</option>
+                            <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                            <option value="ml">Malayalam (മലയാളം)</option>
+                            <option value="mr">Marathi (मराठी)</option>
+                            <option value="bn">Bengali (বাংলা)</option>
+                            <option value="gu">Gujarati (ગુજરાતી)</option>
+                            <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                            <option value="or">Odia (ଓଡ଼ିଆ)</option>
+                            <option value="as">Assamese (অসমীয়া)</option>
+                            <option value="en">English</option>
+                        </select>
                     </div>
                 </div>
-            </div>
-            
-            <div class="hud-panel rsu-panel">
-                <h3>ROADSIDE UNIT (RSU) UPLINKS</h3>
-                <div class="env-metrics">
-                    <div class="env-row"><span>RSU-NODE-ALPHA</span><span id="rsu1" class="value tech-font safe-text">98% (-42dBm)</span></div>
-                    <div class="env-row"><span>RSU-NODE-BETA</span><span id="rsu2" class="value tech-font warning-text">64% (-71dBm)</span></div>
+
+                <!-- Call Control Actions & Telephony State -->
+                <div class="call-action-bar">
+                    <button id="btnStartCall" class="btn-hud primary call-btn-main">🎤 Start Call</button>
+                    <button id="btnEndCall" class="btn-hud danger call-btn-main hidden">🛑 End Call</button>
+                    <button id="btnToggleMute" class="btn-hud-small" title="Toggle Microphone Mute" disabled>🔇 Mute</button>
+                    <button id="btnToggleSpeaker" class="btn-hud-small" title="Toggle Speaker Audio" disabled>🔊 Speaker</button>
+                    <button id="btnExpandCall" class="btn-hud-small" title="Open Full Screen Call HUD">⛶ Expand</button>
+                </div>
+
+                <!-- Call Status & Connection Info Bar -->
+                <div id="callStatusBar" class="call-status-bar idle">
+                    <div class="status-left">
+                        <span class="call-pulse-dot"></span>
+                        <span id="callStatusText">IDLE — Press Start Call to Connect</span>
+                    </div>
+                    <div class="status-right">
+                        <span id="callTimer">00:00</span>
+                        <span id="callConnType" class="badge-mini">WebRTC</span>
+                    </div>
+                </div>
+
+                <!-- Live Continuous Speech-to-Speech Streaming Bar -->
+                <div class="live-partial-stream-bar">
+                    <div class="stream-role-indicator">
+                        <span id="activeSpeakerBadge" class="speaker-role-tag">Driver Mic:</span>
+                        <span id="micWaveform" class="waveform-anim idle"><span></span><span></span><span></span><span></span></span>
+                    </div>
+                    <div id="livePartialText" class="live-partial-text">Listening for speech...</div>
+                </div>
+
+                <!-- Conversation-Style Transcript Stream (Driver vs Tollgate) -->
+                <div id="liveConversationBox" class="live-conversation-box">
+                    <div class="trans-item system">
+                        <span class="trans-meta">12 INDIAN LANGUAGES SUPPORTED</span>
+                        <div class="trans-body">Full duplex voice channel ready. Spoken speech translates continuously across Indian languages without manual typing.</div>
+                    </div>
+                </div>
+
+                <!-- Manual Input / Speech Dispatch Row -->
+                <div class="trans-input-row">
+                    <input type="text" id="transTextInput" class="trans-input" placeholder="Type or click Speak..." autocomplete="off">
+                    <button id="btnVoiceRecord" class="btn-voice" title="Push to Speak (Microphone)" aria-label="Push to Speak">🎙️</button>
+                    <button id="btnTranslateSend" class="btn-hud-small primary">Translate</button>
+                </div>
+
+                <!-- Simulation Language Pair Quick-Test Buttons -->
+                <div class="sim-presets-bar">
+                    <span class="preset-label">Test Pairs:</span>
+                    <button class="btn-preset" data-src="te" data-tgt="hi" data-phrase="రోడ్డు ప్రమాదం జరిగింది, అత్యవసర సహాయం కావాలి.">TE ➔ HI</button>
+                    <button class="btn-preset" data-src="hi" data-tgt="te" data-phrase="हम तुरंत एम्बुलेंस और हाईवे पेट्रोल भेज रहे हैं।">HI ➔ TE</button>
+                    <button class="btn-preset" data-src="ta" data-tgt="hi" data-phrase="சாலை விபத்து ஏற்பட்டுள்ளது, உடனடியாக அவசர உதவி அனுப்பவும்.">TA ➔ HI</button>
+                    <button class="btn-preset" data-src="hi" data-tgt="ta" data-phrase="कृपया शांत रहें, सहायता रास्ते में है।">HI ➔ TA</button>
+                    <button class="btn-preset" data-src="kn" data-tgt="en" data-phrase="ಬ್ರೇಕ್ ವಿಫಲವಾಗಿದೆ! ದಯವಿಟ್ಟು ಇತರ ವಾಹನಗಳು ದಾರಿ ಬಿಡಿ.">KN ➔ EN</button>
+                    <button class="btn-preset" data-src="en" data-tgt="te" data-phrase="Highway emergency patrol dispatched to your GPS location.">EN ➔ TE</button>
                 </div>
             </div>
 
+            <!-- Emergency Direct Calling Directory -->
+            <div class="hud-panel emergency-call-panel">
+                <h3>🚨 Highway Emergency Contacts</h3>
+                <div class="emergency-buttons-grid">
+                    <a href="tel:1033" class="btn-call-card highlight">
+                        <span class="call-icon">🛣️</span>
+                        <div class="call-info">
+                            <span class="call-name">NHAI Helpline</span>
+                            <span class="call-number">1033</span>
+                        </div>
+                    </a>
+                    <a href="tel:112" class="btn-call-card">
+                        <span class="call-icon">🚨</span>
+                        <div class="call-info">
+                            <span class="call-name">National Emergency</span>
+                            <span class="call-number">112</span>
+                        </div>
+                    </a>
+                    <a href="tel:108" class="btn-call-card">
+                        <span class="call-icon">🚑</span>
+                        <div class="call-info">
+                            <span class="call-name">Trauma Ambulance</span>
+                            <span class="call-number">108</span>
+                        </div>
+                    </a>
+                    <a href="tel:100" class="btn-call-card">
+                        <span class="call-icon">🚓</span>
+                        <div class="call-info">
+                            <span class="call-name">Highway Police</span>
+                            <span class="call-number">100</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Speed Matrix Chart -->
             <div class="hud-panel chart-panel">
-                <h3>SPEED MATRIX</h3>
+                <h3>High-Speed Telemetry (10Hz)</h3>
                 <div class="chart-wrapper">
                     <canvas id="speedChart"></canvas>
                 </div>
@@ -137,17 +457,18 @@
         </aside>
     </div>
 
-    <!-- Floating DPI Feed -->
+    <!-- Floating Bottom DPI Hex Dump & Gateway Status -->
     <div class="hud-bottom-center glass-hud">
-        <div class="hud-panel dpi-panel" style="height: 100%; display: flex; flex-direction: column;">
-            <h3>DEEP PACKET INSPECTION (DPI) FEED</h3>
-            <div id="dpiFeed" class="dpi-feed tech-font">
-                <!-- Hex dump log -->
-            </div>
+        <div class="dpi-header-row">
+            <h3>Deep Packet Inspection (DPI) &amp; Gateway Uplink</h3>
+            <span id="gatewayStatusBadge" class="gateway-badge online">RSU GATEWAY: ONLINE [COM3]</span>
+        </div>
+        <div id="dpiFeed" class="dpi-feed">
+            <!-- Live scrolling hex frames -->
         </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="/js/app.js?v=5"></script>
+    <script src="/js/app.js?v=20"></script>
 </body>
 </html>

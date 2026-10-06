@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Modules and Functionalities — V2V SCADA</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm 18mm 20mm 18mm;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.6;
+            color: #000;
+            background: #fff;
+            padding: 20mm 18mm;
+        }
+        h1 {
+            text-align: center;
+            font-size: 16pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 8px;
+            margin-bottom: 6px;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 13pt;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .project-title {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 18px;
+            font-size: 11pt;
+        }
+        .meta-table td {
+            padding: 3px 8px;
+            vertical-align: top;
+        }
+        .meta-table td:first-child {
+            font-weight: bold;
+            width: 160px;
+        }
+        h2 {
+            font-size: 13pt;
+            font-weight: bold;
+            margin-top: 16px;
+            margin-bottom: 8px;
+            padding: 4px 8px;
+            background: #e8e8e8;
+            border-left: 4px solid #333;
+        }
+        .module-num {
+            font-weight: bold;
+            margin-right: 4px;
+        }
+        table.mod-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+            font-size: 11pt;
+        }
+        table.mod-table th,
+        table.mod-table td {
+            border: 1px solid #000;
+            padding: 5px 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        table.mod-table th {
+            background: #d9d9d9;
+            font-weight: bold;
+            font-size: 11pt;
+        }
+        table.mod-table td:first-child {
+            width: 40px;
+            text-align: center;
+            font-weight: bold;
+        }
+        table.mod-table td:nth-child(2) {
+            width: 190px;
+            font-weight: bold;
+        }
+        .sig-section {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            page-break-inside: avoid;
+        }
+        .sig-block {
+            text-align: center;
+            width: 45%;
+        }
+        .sig-line {
+            border-top: 1px solid #000;
+            margin-top: 50px;
+            padding-top: 4px;
+            font-weight: bold;
+            font-size: 11pt;
+        }
+        .sig-label {
+            font-size: 10pt;
+            color: #333;
+        }
+        ul {
+            margin-left: 18px;
+            margin-bottom: 4px;
+        }
+        li {
+            margin-bottom: 2px;
+        }
+        .tech-stack {
+            font-size: 11pt;
+            margin-bottom: 12px;
+        }
+        .tech-stack td {
+            padding: 2px 8px;
+            border: 1px solid #000;
+        }
+        .tech-stack td:first-child {
+            font-weight: bold;
+            width: 140px;
+            background: #f0f0f0;
+        }
+        @media print {
+            body { padding: 0; }
+            h2 { background: #e8e8e8 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            table.mod-table th { background: #d9d9d9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Modules and Functionalities</h1>
+    <p class="subtitle">Project Documentation for Guide Approval</p>
+    <p class="project-title">Real-Time Vehicle-to-Vehicle (V2V) Communication &amp; SCADA Safety Monitoring System</p>
+
+    <table class="meta-table">
+        <tr><td>Domain:</td><td>Internet of Things (IoT) / Embedded Systems / Cyber-Physical Systems</td></tr>
+        <tr><td>Technology Stack:</td><td>STM32 (ARM Cortex-M), SX1281 2.4GHz RF, Python (FastAPI), MQTT, WebSockets, Scikit-Learn, HTML/CSS/JS, Leaflet.js</td></tr>
+        <tr><td>Database:</td><td>SQLite</td></tr>
+        <tr><td>Communication:</td><td>MQTT Protocol (Eclipse Mosquitto) / Semtech SX1281 (2.4GHz High-Speed RF Broadcast)</td></tr>
+    </table>
+
+    <h2>System Modules</h2>
+
+    <table class="mod-table">
+        <thead>
+            <tr>
+                <th>S.No</th>
+                <th>Module Name</th>
+                <th>Functionalities</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>IoT Firmware Module<br><em>(STM32 / Arduino / RadioLib)</em></td>
+                <td>
+                    <ul>
+                        <li>Acquires real-time GPS coordinates (Latitude, Longitude, Speed) from U-blox NEO-M8N/6M GNSS module via UART (USART2) at 10 Hz.</li>
+                        <li>Acquires 9-DOF / 6-DOF inertial orientation (Absolute Heading/Yaw, Pitch, Roll) from Bosch BNO055 / MPU-6050 sensor via I2C (I2C1).</li>
+                        <li>Constructs a JSON telemetry payload with Vehicle ID, Type, Timestamp, Latitude, Longitude, Speed, Heading, Pitch, and Roll.</li>
+                        <li>Generates an HMAC-SHA256 cryptographic signature for each payload using the Crypto library to prevent Ghost Vehicle spoofing.</li>
+                        <li>Broadcasts the signed telemetry payload at 10Hz over 2.4GHz RF using the Semtech SX1281 transceiver without requiring cellular internet.</li>
+                        <li>Receives RF broadcasts from nearby vehicles to perform edge-level collision avoidance and trigger in-cockpit audio-visual alarms (Buzzer, LEDs, AEB relay).</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>MQTT Communication Module<br><em>(Eclipse Mosquitto)</em></td>
+                <td>
+                    <ul>
+                        <li>Acts as the central message broker running on localhost (port 1883) for all publish/subscribe communication.</li>
+                        <li>Manages topic-based routing: <code>v2v/telemetry</code> (vehicles → backend), <code>v2v/alerts/{id}</code> (backend → vehicles), <code>v2v/commands</code> (backend → all).</li>
+                        <li>Supports TLS encryption on port 8883 using generated certificates for secure transport.</li>
+                        <li>Operates entirely on the local network — no internet or cloud dependency.</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Security &amp; Authentication Module<br><em>(Backend — Python)</em></td>
+                <td>
+                    <ul>
+                        <li>Verifies the HMAC-SHA256 signature of every incoming telemetry packet using constant-time comparison (<code>hmac.compare_digest</code>) to prevent timing attacks.</li>
+                        <li>Silently drops packets with invalid signatures and fires a <code>security_alert</code> event to the frontend via WebSocket.</li>
+                        <li>Logs all blocked intrusion attempts with timestamp, source ID, and raw payload for forensic auditing.</li>
+                        <li>Prevents Ghost Vehicle Attacks (injection of fake vehicle positions to cause phantom braking).</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Collision Detection &amp; ML Prediction Module<br><em>(Backend — Python / Scikit-Learn)</em></td>
+                <td>
+                    <ul>
+                        <li>Calculates real-time distance between all active vehicle pairs using the Haversine formula (accounts for Earth's curvature).</li>
+                        <li>Computes closing speed and Time-To-Collision (TTC) based on relative velocity vectors.</li>
+                        <li>Uses a pre-trained Random Forest Classifier (Scikit-Learn) to predict collision risk levels: Safe (0), Warning (1), Critical (2).</li>
+                        <li>Falls back to a deterministic rule-based engine if the ML model is unavailable.</li>
+                        <li>Generates predictive trajectory lines projecting vehicle positions 5 seconds into the future.</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Geofencing Module<br><em>(Backend + Frontend)</em></td>
+                <td>
+                    <ul>
+                        <li>Defines restricted geographic zones as GPS coordinate polygons (e.g., construction sites, school zones, military areas).</li>
+                        <li>Performs real-time point-in-polygon checks for every vehicle position update.</li>
+                        <li>Triggers a Geofence Breach alert on the dashboard when a vehicle enters a restricted zone.</li>
+                        <li>Renders the restricted zone as a dashed red boundary on the live map.</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Emergency Vehicle Detection Module<br><em>(Backend)</em></td>
+                <td>
+                    <ul>
+                        <li>Identifies vehicles with <code>vehicle_type: "Emergency"</code> (ambulance, fire truck, police).</li>
+                        <li>Calculates proximity of all nearby vehicles within a 200-meter radius.</li>
+                        <li>Pushes "YIELD RIGHT OF WAY" alert to all vehicles in the vicinity via MQTT and WebSocket.</li>
+                        <li>Displays a distinct blue emergency marker with strobe animation on the SCADA dashboard.</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>SCADA Dashboard Module<br><em>(Frontend — HTML/CSS/JS)</em></td>
+                <td>
+                    <ul>
+                        <li>Full-screen dark-themed HUD (Heads-Up Display) built with HTML5, CSS3, and vanilla JavaScript.</li>
+                        <li>Interactive map powered by Leaflet.js showing real-time vehicle positions as animated radar blips with predictive trajectory lines.</li>
+                        <li>Real-time speed matrix chart (Chart.js) plotting simultaneous speed data for all active vehicles.</li>
+                        <li>Threat Detection panel displaying collision, geofence, cyber-attack, and emergency alerts with severity-coded cards.</li>
+                        <li>Deep Packet Inspection (DPI) Feed — live scrolling hex-dump of encrypted MQTT payloads for network transparency.</li>
+                        <li>Network Integrity panel showing average latency, HMAC verification status, and packet drop rate.</li>
+                        <li>V2I Signal Phase &amp; Timing (SPaT) display simulating traffic light interception.</li>
+                        <li>Broadcast Terminal for sending commands to all connected vehicles.</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>Platooning Coordinator Module<br><em>(Backend + Frontend)</em></td>
+                <td>
+                    <ul>
+                        <li>Detects when two or more vehicles are travelling in the same direction within close proximity (convoy formation).</li>
+                        <li>Calculates aerodynamic drafting benefit percentage based on inter-vehicle gap.</li>
+                        <li>Displays platoon status (Searching / Linked) and drafting efficiency on the dashboard.</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>Report Generation Module<br><em>(Backend — ReportLab)</em></td>
+                <td>
+                    <ul>
+                        <li>Generates a comprehensive PDF session report on demand via the "Export PDF" button.</li>
+                        <li>Includes session duration, total vehicles tracked, collision incidents logged, security events, and system performance metrics.</li>
+                        <li>Uses the ReportLab library for professional-grade PDF output.</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td>Database &amp; Logging Module<br><em>(SQLite)</em></td>
+                <td>
+                    <ul>
+                        <li>Automatically initializes the SQLite database schema on first run.</li>
+                        <li>Logs all collision incidents with timestamp, involved vehicles, distance, closing speed, and risk level.</li>
+                        <li>Stores security events (blocked spoofing attempts) for post-incident forensic analysis.</li>
+                        <li>Provides data persistence for the report generation module.</li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="sig-section">
+        <div class="sig-block">
+            <div class="sig-line">Student Signature</div>
+            <div class="sig-label">Name: _________________________</div>
+            <div class="sig-label">Roll No: _______________________</div>
+            <div class="sig-label">Date: _________________________</div>
+        </div>
+        <div class="sig-block">
+            <div class="sig-line">Guide Signature</div>
+            <div class="sig-label">Name: _________________________</div>
+            <div class="sig-label">Designation: ___________________</div>
+            <div class="sig-label">Date: _________________________</div>
+        </div>
+    </div>
+
+</body>
+</html>

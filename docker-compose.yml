@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Local Mosquitto MQTT Broker (Zero-Cloud / Internet-Independent)
+  mosquitto:
+    image: eclipse-mosquitto:2.0.18
+    container_name: v2v_mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "8883:8883"
+    volumes:
+      - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+
+  # FastAPI Supervisory SCADA Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: v2v_scada_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - MQTT_BROKER=mosquitto
+      - MQTT_PORT=1883
+      - HMAC_SECRET=v2v_shared_secret_123
+      - DB_PATH=/app/database/v2v_data.db
+    volumes:
+      - ./database:/app/database
+      - ./reports:/app/reports
+    depends_on:
+      - mosquitto
+
+volumes:
+  mosquitto_data:
+  mosquitto_log:

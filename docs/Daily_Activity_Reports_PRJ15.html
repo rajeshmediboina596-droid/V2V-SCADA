@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily Activity Reports — PRJ_15</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 15mm 15mm 15mm 15mm;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 11pt;
+            line-height: 1.45;
+            color: #000;
+            background: #f4f4f4;
+        }
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 18mm 18mm;
+            margin: 10mm auto;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.15);
+            page-break-after: always;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 6px;
+            margin-bottom: 12px;
+        }
+        .inst-title {
+            font-size: 13pt;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        .dept-title {
+            font-size: 11pt;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+        .report-title {
+            font-size: 12pt;
+            font-weight: bold;
+            margin-top: 4px;
+            text-transform: uppercase;
+            text-decoration: underline;
+        }
+        .meta-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            font-size: 10.5pt;
+        }
+        .meta-grid td {
+            padding: 3px 4px;
+            vertical-align: top;
+        }
+        .members-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+            font-size: 9.5pt;
+            text-align: center;
+        }
+        .members-table th, .members-table td {
+            border: 1px solid #000;
+            padding: 4px 6px;
+        }
+        .members-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        .field-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+            font-size: 10.5pt;
+        }
+        .field-table td {
+            padding: 4px 2px;
+            vertical-align: top;
+        }
+        .field-label {
+            font-weight: bold;
+            width: 170px;
+        }
+        .activities-box {
+            border: 1px solid #000;
+            padding: 10px 14px;
+            min-height: 380px;
+            font-size: 10pt;
+            line-height: 1.5;
+            background: #fafafa;
+            flex-grow: 1;
+            margin-bottom: 20px;
+        }
+        .activities-heading {
+            font-weight: bold;
+            font-size: 10.5pt;
+            margin-bottom: 8px;
+            text-decoration: underline;
+        }
+        .footer-sig {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding-top: 15px;
+            page-break-inside: avoid;
+        }
+        .sig-box {
+            text-align: center;
+            width: 200px;
+            border-top: 1px solid #000;
+            padding-top: 4px;
+            font-weight: bold;
+            font-size: 10pt;
+        }
+        .page-num {
+            position: absolute;
+            bottom: 6mm;
+            right: 18mm;
+            font-size: 9pt;
+            color: #555;
+        }
+        @media print {
+            body { background: #fff; }
+            .page {
+                box-shadow: none;
+                margin: 0;
+                width: 100%;
+                min-height: 100vh;
+                page-break-after: always;
+                padding: 15mm 15mm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 03-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 01 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Architecture & Hardware Infrastructure</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>System Architecture Definition, Feasibility Study & Hardware Pinout Planning</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>docs/modules_and_functionalities.html, v2v.md</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Conducted preliminary requirement analysis and architectural design for an Internet-Independent Vehicle-to-Vehicle (V2V) Communication and SCADA Safety Monitoring System.<br/>2. Analyzed the upcoming Government of India Ministry of Road Transport and Highways (MoRTH) AIS-230 automotive standard mandate for vehicular safety and inter-vehicle telemetry.<br/>3. Selected compute and communication components: STM32F103C8T6 (Bluepill) and ESP32 DevKit V1 microcontrollers, U-blox NEO-6M GNSS receivers for 10Hz position acquisition, and local 2.4GHz RF / ESP-NOW wireless links to eliminate cellular and internet latency.<br/>4. Formulated the high-level 4-tier architecture: Edge Layer (Vehicles), Gateway/RSU Layer (Serial bridge), Transport/Broker Layer (Local Mosquitto MQTT), and Supervisory SCADA Layer (FastAPI + WebSockets + Leaflet.js).<br/>5. Defined the hardware pinout diagram: GPS TX/RX to microcontroller USART1 (PA9/PA10) at 9600 baud, RF module SPI interface, warning buzzer, and status indicator LEDs.<br/>6. Formulated team task distribution across the 5 project members and initialized the project documentation.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 1 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 04-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 02 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Database</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Database Schema Design & SQLite Async Batch Worker Engine</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>backend/database.py</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Designed the relational database schema using SQLite (database/v2v_data.db) for high-speed edge telemetry ingestion and critical vehicular safety incident auditing.<br/>2. Created database table 'telemetry' (id, vehicle_id, timestamp, lat, lon, speed_kmph, heading_deg, raw_payload) and table 'incidents' (id, timestamp, vehicle_a, vehicle_b, distance, closing_speed, risk_level).<br/>3. Implemented an asynchronous batching worker thread (_write_worker) with a thread-safe queue.Queue(maxsize=5000) to prevent SQLite database write lock contention during high-frequency (10Hz) incoming streams from multiple concurrent vehicles.<br/>4. Configured batch flushing logic (_write_batch) collecting up to 250 records per write cycle to optimize disk I/O throughput.<br/>5. Wrote query helper functions log_telemetry(), log_incident(), and fetch_recent_incidents() for downstream consumption by the SCADA backend and report generator.<br/>6. Tested write throughput under simulated bursts of 1,000 telemetry messages; confirmed zero thread blocking and 100% data persistence.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 2 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 05-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 03 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Business logic / Network Transport</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Local MQTT Broker Setup, Topic Hierarchy & Mosquitto Configuration</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>mqtt/mosquitto.conf, mqtt/docker-compose.yml</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Installed and configured the local Eclipse Mosquitto MQTT Broker to operate entirely within an offline, isolated local area network without external internet dependence.<br/>2. Defined the MQTT topic hierarchy:<br/>   - 'v2v/telemetry': High-frequency vehicle sensor broadcasts to central SCADA.<br/>   - 'v2v/alerts/{vehicle_id}': Targeted collision warnings dispatched to specific vehicle nodes.<br/>   - 'v2v/commands': Broadcast administrative messages to all active vehicular nodes.<br/>3. Configured mqtt/mosquitto.conf with port 1883, listener rules, persistence storage settings, and maximum connection limits.<br/>4. Developed mqtt/generate_certs.py and OpenSSL scripts to provision self-signed Certificate Authority (CA), server certificates, and client keys for optional TLS encryption on port 8883.<br/>5. Verified local pub/sub throughput using command-line Mosquitto tools (mosquitto_sub and mosquitto_pub) with zero message loss across 5,000 test packets.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 3 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 06-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 04 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Business logic / Security</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Edge Cryptographic Authentication & Anti-Spoofing Engine</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>backend/mqtt_client.py</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Formulated the cyber-defense mechanism to prevent 'Ghost Vehicle Attacks' and Man-in-the-Middle (MitM) coordinate injection on vehicular communication channels.<br/>2. Implemented the verify_signature() function utilizing the HMAC-SHA256 cryptographic algorithm.<br/>3. Designed the message signing payload string format: concatenation of vehicle_id, vehicle_type, timestamp, lat, lon, speed_kmph, and heading_deg.<br/>4. Enforced constant-time cryptographic hash comparison via Python's hmac.compare_digest() to eliminate vulnerability to side-channel timing attacks.<br/>5. Programmed automated payload rejection: invalid or modified packets are dropped immediately, and a high-priority 'security_alert' event is pushed to the SCADA threat log.<br/>6. Simulated malicious injection payloads using rogue keys; verified that legitimate packets authenticate in < 15 microseconds while tampered packets trigger instant security drops.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 4 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 07-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 05 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Hardware & Firmware</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Microcontroller GPS Telemetry Acquisition & NMEA Parser Firmware</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>esp32/firmware/main.ino, stm32/firmware/main.ino</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Started</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Developed firmware routines for the microcontroller edge node to interface with the U-blox NEO-6M GPS receiver over hardware UART.<br/>2. Implemented NMEA-0183 sentence parsing (extracting $GPRMC and $GPGGA sentences) using TinyGPS++ library routines to acquire Latitude, Longitude, Ground Speed (km/h), and Compass Heading (degrees).<br/>3. Formatted telemetry into standard JSON structure containing device metadata, sensor readings, and UNIX millisecond timestamps.<br/>4. Added cryptographic signing routines in firmware using mbedTLS library to compute the HMAC-SHA256 signature directly on-chip prior to transmission.<br/>5. Configured timer interrupts to ensure strict 100ms (10Hz) transmission periodicity.<br/>6. Conducted bench testing with NEO-6M receiver near window; observed cold start TTFF (Time-To-First-Fix) and validated UART parsing stability.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 5 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 09-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 06 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Business logic / Hardware Interface</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Roadside Unit (RSU) Gateway & Serial-to-MQTT Bridge</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>backend/serial_to_mqtt.py</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Developed the hardware gateway communication daemon backend/serial_to_mqtt.py to bridge physical vehicle RF radio signals to the local SCADA MQTT broker.<br/>2. Implemented serial port discovery and communication routines using pyserial at 115200 baud rate with non-blocking read timeouts.<br/>3. Created raw serial stream buffering and payload frame boundary detection (checking '{' and '}' delimiters) to filter out line noise and incomplete RF packets.<br/>4. Bound the serial reader thread to a persistent Paho MQTT client publishing valid JSON telemetry frames onto topic 'v2v/telemetry'.<br/>5. Added automatic reconnection handling to safeguard against accidental USB cable disconnection or port reset.<br/>6. Tested end-to-end data flow: injected raw test telemetry strings from microcontroller serial output and confirmed immediate reception by the MQTT broker in < 5 milliseconds.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 6 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 10-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 07 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Business logic</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Haversine Spherical Distance Calculation & Relative Motion Vectors</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>backend/mqtt_client.py</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Implemented mathematical models for real-time spatial positioning of moving vehicles on the spherical surface of the Earth.<br/>2. Programmed the haversine() function in backend/mqtt_client.py, calculating great-circle distance between two geographic coordinates using Earth radius R = 6,371,000 meters.<br/>3. Formulated 2D Cartesian coordinate transformation from geodesic coordinates (Lat/Lon) to local tangent plane meters (dx, dy) taking into account latitude-dependent longitudinal shrinkage (cos(mid_lat)).<br/>4. Derived vehicle velocity vectors (vx = s * cos(theta), vy = s * sin(theta)) from speed in m/s and compass heading.<br/>5. Implemented relative velocity dot-product math to compute instantaneous closing speed between any two vehicular nodes.<br/>6. Unit tested with known coordinate pairs; confirmed geometric error is under 0.05% compared to Vincenty's geodetic formula over 500-meter ranges.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 7 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 11-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 08 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Business logic / Machine Learning</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Time-To-Collision (TTC) Dynamics & Synthetic Training Dataset Generation</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>ml/train_model.py</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Analyzed the physical limitations of purely static proximity thresholds in dynamic vehicular environments (e.g., two cars stopped 5 meters apart vs. two cars heading towards each other at 80 km/h).<br/>2. Formulated Time-To-Collision equation: TTC = Distance / Closing Speed.<br/>3. Developed ml/train_model.py to synthesize a comprehensive training dataset spanning 10,000 realistic traffic scenarios.<br/>4. Classified risks into three distinct safety tiers:<br/>   - Level 0 (Safe): Large distance or negative/zero closing speed (TTC > 5.0s).<br/>   - Level 1 (Warning): Moderate closing speed with diminishing headway (2.0s <= TTC <= 5.0s).<br/>   - Level 2 (Critical): Imminent impact requiring automated emergency braking (0s < TTC < 2.0s).<br/>5. Incorporated Gaussian measurement noise to simulate real-world GPS position jitter and velocity estimation variations.<br/>6. Verified class balance across the synthesized dataset using NumPy and Pandas summary statistics.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 8 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 12-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 09 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Business logic / Machine Learning</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Random Forest Collision Risk Classifier Training & Model Serialization</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>ml/train_model.py, ml/collision_risk_model.pkl</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Implemented the Machine Learning pipeline using scikit-learn to train a high-accuracy tabular classifier for predictive collision risk estimation.<br/>2. Evaluated candidate algorithms (Logistic Regression, Decision Trees, Random Forest); selected Random Forest Classifier with 100 estimators for superior non-linear decision boundary modeling.<br/>3. Executed 80/20 train-test split and performed 5-fold cross-validation.<br/>4. Achieved >99% classification accuracy, precision, and recall on the held-out test dataset across all three risk categories.<br/>5. Exported and serialized the trained model to ml/collision_risk_model.pkl using Python's pickle library for low-latency in-memory execution.<br/>6. Benchmarked inference latency: verified that model prediction executes in under 0.8 milliseconds per vehicle pair, well within the 100ms budget of 10Hz telemetry.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 9 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 13-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 10 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Business logic</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Hybrid Collision Prediction Engine Integration & Safe Fallback</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>ml/collision_model.py, backend/mqtt_client.py</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Created the wrapper class CollisionPredictor in ml/collision_model.py to decouple model inference from backend transport logic.<br/>2. Implemented robust error handling: if the pre-trained pickle model is missing or corrupted, the system gracefully falls back to deterministic rule-based TTC evaluation, ensuring zero downtime.<br/>3. Integrated compute_collision_risk() into backend/mqtt_client.py to evaluate every active vehicle against all nearby peers upon every incoming telemetry update.<br/>4. Added pairwise throttling logic (PAIR_EVALUATION_INTERVAL_SECONDS = 0.25) to cap algorithmic complexity at scale without compromising reaction time.<br/>5. Configured MQTT alert dispatch: when risk level > 0, an alert JSON payload is published to 'v2v/alerts/{vehicle_id}' and queued for frontend SCADA notification.<br/>6. Conducted end-to-end integration tests simulating two converging vehicles; verified alert generation triggered at exactly 4.8 seconds prior to simulated impact.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 10 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 16-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 11 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Business logic / Web Application</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>FastAPI Asynchronous Core, Security Middlewares & WebSocket Broadcast Hub</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>backend/main.py</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Built the centralized SCADA web service using the FastAPI asynchronous framework (backend/main.py).<br/>2. Configured CORS middleware and essential cybersecurity HTTP response headers (X-Frame-Options: DENY, X-Content-Type-Options: nosniff, Strict-Transport-Security).<br/>3. Mounted static directories /css and /js to serve frontend SCADA assets directly from local storage without external CDN dependencies.<br/>4. Implemented the bidirectional WebSocket endpoint /ws managing active browser client sessions.<br/>5. Developed the asynchronous consumer coroutine broadcast_messages() utilizing asyncio.Queue to dispatch MQTT telemetry and threat events to all connected clients at 60 FPS.<br/>6. Added client disconnection detection and dead socket cleanup logic to prevent memory leaks during long-running operational sessions.<br/>7. Tested WebSocket concurrency with multiple simultaneous browser tabs; recorded smooth 60Hz message streaming.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 11 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 17-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 12 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Business logic</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Geofencing Engine & Ray-Casting Point-in-Polygon Detection</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>backend/mqtt_client.py</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Designed the SCADA Geofencing subsystem to enforce restricted geographic zones (construction sites, high-pedestrian school zones, VIP security perimeters).<br/>2. Defined GPS coordinate boundary polygon RESTRICTED_ZONE in backend/mqtt_client.py spanning 4 GPS vertices.<br/>3. Programmed the Ray-Casting algorithm (is_in_polygon(lat, lon, poly)) to determine whether any vehicle coordinates lie inside or outside the arbitrary polygon boundary.<br/>4. Configured high-priority alert generation: upon zone violation, the system generates a risk_level: 3 (Geofence Breach) alarm targeting the offending vehicle.<br/>5. Added alert dispatch to MQTT topic 'v2v/alerts/{vid}' and immediate WebSocket broadcast to SCADA operators.<br/>6. Verified edge cases: tested vehicle coordinates strictly on boundaries, outside, and inside the polygon; confirmed 100% detection accuracy.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 12 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 18-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 13 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Business logic</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Emergency Vehicle Priority Detection & Yield Advisory Override</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>backend/mqtt_client.py</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Implemented specialized handling for emergency vehicles (ambulances, fire engines, police interceptors) identified by vehicle_type: 'Emergency'.<br/>2. Programmed proximity scanning logic: when an emergency vehicle is detected within a 200-meter radius of any civilian passenger vehicle, an automated priority override is triggered.<br/>3. Created alert class risk_level: 4 ('Emergency Yield Right of Way') warning civilian drivers to safely pull over or yield lanes.<br/>4. Added rate-limiting registry (ALERT_RESEND_INTERVAL_SECONDS = 1.0) to avoid flooding network bandwidth while maintaining persistent situational awareness.<br/>5. Integrated the emergency alert pipeline into the SCADA event feed to notify dispatchers of active siren/emergency corridors.<br/>6. Tested multi-vehicle scenarios involving one emergency unit approaching two passenger cars; confirmed both passenger vehicles received yield commands simultaneously.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 13 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 19-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 14 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>GUI (Frontend)</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>SCADA HUD Interface Layout, Cyberpunk Styling & DOM Architecture</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>frontend/index.html, frontend/css/style.css</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Developed the responsive SCADA Heads-Up Display (HUD) interface using HTML5 semantic elements and vanilla CSS3.<br/>2. Implemented an industrial dark-themed aesthetic with cyan/amber HUD accents, high-contrast indicators, and glassmorphic telemetry cards.<br/>3. Structured the operational dashboard layout:<br/>   - Header status bar: System mode toggle (LIVE / DEMO), connection status, clock, and emergency PDF export trigger.<br/>   - Central operational viewport: Full-screen interactive tactical map.<br/>   - Left telemetry sidebar: Active vehicle count, average network latency, and live speed telemetry matrix.<br/>   - Right safety & security drawer: Real-time threat detection feed, geofence alarm cards, and Deep Packet Inspection (DPI) monitor.<br/>   - Bottom command console: V2I traffic signal timing and broadcast override terminal.<br/>4. Styled custom warning flash animations for Level 2 Critical alarms and blue strobe effects for Emergency vehicles.<br/>5. Validated responsive layout rendering across various monitor resolutions (1080p, 1440p, 4K).
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 14 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 20-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 15 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>GUI (Frontend)</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Leaflet.js Tactical GIS Map & Real-Time Radar Blip Marker Engine</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>frontend/js/app.js</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Integrated the Leaflet.js open-source GIS mapping library within frontend/js/app.js to visualize vehicular positions in real time.<br/>2. Configured dark-mode tile layers using CartoDB Dark Matter tiles with local caching fallback for offline operation.<br/>3. Created custom SVG marker blips with directional rotation matching vehicle compass heading (heading_deg).<br/>4. Implemented dynamic vehicle trail visualization: rendering color-coded breadcrumb lines showing historical trajectories of active vehicles.<br/>5. Added dynamic geofence polygon overlays rendering restricted zone boundaries with glowing dashed borders.<br/>6. Programmed marker interpolation to provide smooth vehicle movement across consecutive 10Hz updates without visual stutter.<br/>7. Tested map rendering with 10 concurrently moving vehicle markers; observed smooth 60 FPS canvas performance.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 15 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 21-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 16 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>GUI / Business logic</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>OSRM Road-Snapping & Curvature Waypoint Interpolation</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>backend/routes.json, backend/main.py, frontend/js/app.js</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Addressed the critical issue of vehicular map drift: vehicles moving in straight Cartesian lines often appeared to drive across buildings and non-road terrain.<br/>2. Integrated Open Source Routing Machine (OSRM) geometry to snap simulated and captured vehicular paths to actual real-world street networks.<br/>3. Generated pre-computed polyline waypoints for 4 distinct road corridors and stored them in backend/routes.json.<br/>4. Updated run_demo_simulation() in backend/main.py to iterate along road polyline nodes, automatically computing smooth heading angles from tangent vectors.<br/>5. Implemented predictive trajectory projection lines in frontend/js/app.js: projecting vehicle paths 5 seconds into the future along road vectors.<br/>6. Evaluated visual tracking realism; verified that vehicles adhere strictly to road lanes and intersection turn geometries.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 16 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 23-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 17 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>GUI & Security</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Deep Packet Inspection (DPI) Hex Stream & Network Integrity Monitor</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>frontend/js/app.js, frontend/index.html</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Implemented the Deep Packet Inspection (DPI) hex-dump terminal on the SCADA dashboard to provide network transparency for security auditing.<br/>2. Programmed frontend routines to format incoming JSON payloads and cryptographic hashes into formatted hex byte streams with timestamp tags.<br/>3. Built the Network Integrity metric widgets:<br/>   - Average network transit latency calculation (comparing packet timestamps against local browser receipt clock).<br/>   - Cryptographic signature pass/drop counter.<br/>   - Packet throughput rate (packets per second).<br/>4. Integrated the 'Simulate Cyber Spoofing Attack' UI button in frontend/index.html calling backend /api/spoof.<br/>5. Verified live security response: upon clicking spoof button, the dashboard immediately triggers an audible alarm, displays a red rogue attack banner, and prints the rejected raw packet in the DPI hex log.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 17 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 24-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 18 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Business logic / Reporting</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Automated Incident Reporting & PDF Document Generation Engine</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>backend/report_generator.py, backend/main.py</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Completed</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Developed the automated PDF incident reporting module backend/report_generator.py utilizing Python's reportlab engine.<br/>2. Structured the formal incident report document layout:<br/>   - Header: SCADA Safety Incident & Telemetry Audit Log with NTTF project metadata.<br/>   - Executive Summary Table: Total active session duration, total vehicle telemetry packets processed, collision risks logged, and cyber intrusions blocked.<br/>   - Incident Details Table: Chronological list of near-miss and critical collision warnings with vehicle IDs, timestamp, minimum distance (m), and closing speed.<br/>   - Security Audit Table: Log of blocked rogue packets and signature validation failures.<br/>3. Implemented backend endpoints: POST /api/report to compile the report from SQLite database tables, and GET /api/download/{filename} to serve the generated PDF.<br/>4. Verified generated PDF formatting and page layout across multiple session runs; verified PDF generated cleanly in reports/ directory in < 400ms.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 18 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 25-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 19 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Business logic / Testing</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Multi-Vehicle 20-Node Traffic Load Simulation & Performance Benchmarking</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>esp32/simulator.py, backend/main.py</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Reviewing</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Formulated a comprehensive stress-testing suite to benchmark system performance under heavy vehicular traffic conditions.<br/>2. Expanded run_demo_simulation() to simulate 20 concurrent vehicles: 4 OSRM road-snapped vehicles and 16 linear-drift vehicles moving across the operational zone.<br/>3. Each simulated vehicle computes genuine HMAC-SHA256 signatures and broadcasts telemetry at 10Hz, generating 200 packets per second across the local MQTT broker.<br/>4. Monitored system metrics:<br/>   - Backend CPU utilization remained under 12% on host workstation.<br/>   - SQLite batch worker kept queue size below 50 items with zero disk lock exceptions.<br/>   - End-to-end telemetry latency averaged 18 to 28 milliseconds.<br/>   - WebSocket message streaming held consistent 60 FPS without frame drops.<br/>5. Identified potential bottleneck in pairwise distance computation with N > 30 vehicles; initiated code review for spatial indexing optimization.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 19 of 20</div>
+        </div>
+    </div>
+
+
+    <div class="page">
+        <div>
+            <div class="header">
+                <div class="inst-title">NETTUR TECHNICAL TRAINING FOUNDATION</div>
+                <div class="dept-title">DIPLOMA IN COMPUTER ENGINEERING AND IT INFRASTRUCTURE</div>
+                <div class="report-title">PROJECT &ndash; Daily Activity Report</div>
+            </div>
+
+            <table class="meta-grid">
+                <tr>
+                    <td style="width: 70%;"><strong>Project Title:</strong> Internet-Independent V2V Communication & SCADA Safety Monitoring System</td>
+                    <td style="width: 30%; text-align: right;"><strong>Date:</strong> 27-03-2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Project Code:</strong> PRJ_15</td>
+                    <td style="text-align: right;"><strong>Report Day:</strong> Day 20 of 20</td>
+                </tr>
+            </table>
+
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th colspan="5">Members Present</th>
+                    </tr>
+                    <tr>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER</th>
+                        <th>NAME</th>
+                        <th>TOKEN NUMBER / NAME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NEC0824051</td>
+                        <td>T R MANJUNATH</td>
+                        <td>NEC0824065</td>
+                        <td>MEDIBOINA RAJESH</td>
+                        <td rowspan="2" style="vertical-align: middle;">
+                            <strong>NEC0822087</strong><br/>Lakshmipathi.T
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>NEC0824080</td>
+                        <td>MADIREDDY CHENNAKESAVA REDDY</td>
+                        <td>NEC0824061</td>
+                        <td>THILAK RAJ</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="field-table">
+                <tr>
+                    <td class="field-label">Layer:</td>
+                    <td>Hardware, Firmware & Integration</td>
+                </tr>
+                <tr>
+                    <td class="field-label">Module Name:</td>
+                    <td><strong>Hardware-in-the-Loop (HIL) Breadboard RF Integration & Pending Work Review</strong></td>
+                </tr>
+                <tr>
+                    <td class="field-label">File Name (Physical File Name):</td>
+                    <td><code>esp32/firmware/main.ino, stm32/firmware/main.ino, backend/serial_to_mqtt.py</code></td>
+                </tr>
+                <tr>
+                    <td class="field-label">Status:</td>
+                    <td><strong>Started / Reviewing</strong></td>
+                </tr>
+            </table>
+
+            <div class="activities-box">
+                <div class="activities-heading">Activities carried out in detail:</div>
+                1. Set up the Hardware-in-the-Loop (HIL) breadboard testbench connecting physical ESP32 and STM32 Bluepill microcontrollers with U-blox NEO-6M GPS modules.<br/>2. Flashed updated firmware with hardware UART interrupt routines for low-jitter NMEA sentence acquisition.<br/>3. Interfaced the physical Roadside Unit (RSU) microcontroller to the workstation via USB Serial and launched backend/serial_to_mqtt.py.<br/>4. Conducted preliminary RF packet broadcast tests between two physical breadboard nodes; verified successful reception and forwarding of real hardware GPS packets to the SCADA dashboard.<br/>5. Reviewed current project completion status with the Project Guide:<br/>   - Completed Subsystems: Local MQTT broker architecture, cryptographic HMAC-SHA256 verification, hybrid ML collision risk model, SCADA HUD frontend, OSRM road snapping, SQLite batch logger, and automated PDF reporting.<br/>   - Ongoing / Incomplete Work: Physical multi-node RF range optimization (field testing with 3+ moving vehicles outdoors), audio-visual buzzer/OLED alert latency tuning on the vehicle dashboard, and compliance mapping against the draft AIS-230 specification.<br/>6. Outlined the remaining development roadmap and assigned tasks for subsequent phases.
+            </div>
+        </div>
+
+        <div>
+            <div class="footer-sig">
+                <div class="sig-box">Project Guide</div>
+                <div class="sig-box">Project Co-ordinator</div>
+            </div>
+            <div class="page-num">Page 20 of 20</div>
+        </div>
+    </div>
+
+</body></html>
