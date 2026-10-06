@@ -135,37 +135,37 @@ graph TD
     subgraph VEHICLE_MESH["Vehicle Edge Nodes (Physical Cars / Trucks / Ambulances)"]
         direction TB
         subgraph V1["Vehicle 1 (STM32 Node)"]
-            S1["NEO-M8N GNSS + BNO055 9-DOF IMU"] -->|UART2 / I2C1| MCU1["STM32F103 (ARM Cortex-M3)"]
-            MCU1 -->|10Hz Telemetry + HMAC-SHA256| RF1["Semtech SX1281 2.4GHz Transceiver"]
-            MCU1 -->|TTC < 3.0s Collision Alert| ACT1["SSD1306 HUD + Active Buzzer + AEB Relay"]
+            S1["NEO-M8N GNSS + BNO055 9-DOF IMU"] -->|"UART2 / I2C1"| MCU1["STM32F103 (ARM Cortex-M3)"]
+            MCU1 -->|"10Hz Telemetry + HMAC-SHA256"| RF1["Semtech SX1281 2.4GHz Transceiver"]
+            MCU1 -->|"TTC &lt; 3.0s Collision Alert"| ACT1["SSD1306 HUD + Active Buzzer + AEB Relay"]
         end
         subgraph V2["Vehicle 2 (STM32 Node)"]
-            S2["NEO-M8N GNSS + BNO055 9-DOF IMU"] -->|UART2 / I2C1| MCU2["STM32F103 (ARM Cortex-M3)"]
-            MCU2 -->|10Hz Telemetry + HMAC-SHA256| RF2["Semtech SX1281 2.4GHz Transceiver"]
-            MCU2 -->|TTC < 3.0s Collision Alert| ACT2["SSD1306 HUD + Active Buzzer + AEB Relay"]
+            S2["NEO-M8N GNSS + BNO055 9-DOF IMU"] -->|"UART2 / I2C1"| MCU2["STM32F103 (ARM Cortex-M3)"]
+            MCU2 -->|"10Hz Telemetry + HMAC-SHA256"| RF2["Semtech SX1281 2.4GHz Transceiver"]
+            MCU2 -->|"TTC &lt; 3.0s Collision Alert"| ACT2["SSD1306 HUD + Active Buzzer + AEB Relay"]
         end
         RF1 <-->|"Direct Peer-to-Peer 2.4GHz FLRC RF Link (Sub-3ms Latency, Zero Cellular)"| RF2
     end
 
     subgraph RSU_GATEWAY["Roadside Unit (RSU) / Highway Gateway Node"]
-        RF_GW["SX1281 2.4GHz Receiver Antenna"] -->|SPI1| MCU_GW["STM32 Gateway Node"]
-        MCU_GW -->|115200 Baud USB Serial Bridge| PY_SER["serial_to_mqtt.py (Autonomous Dispatch)"]
+        RF_GW["SX1281 2.4GHz Receiver Antenna"] -->|"SPI1"| MCU_GW["STM32 Gateway Node"]
+        MCU_GW -->|"115200 Baud USB Serial Bridge"| PY_SER["serial_to_mqtt.py (Autonomous Dispatch)"]
     end
 
     RF1 -.->|"V2I RF Broadcast Uplink"| RF_GW
     RF2 -.->|"V2I RF Broadcast Uplink"| RF_GW
 
     subgraph SCADA_STACK["Central SCADA Safety & Highway Monitoring Host"]
-        PY_SER -->|JSON Stream| CORE_DISPATCH["FastAPI Dispatch & In-Memory Pipeline"]
-        CORE_DISPATCH <-->|Optional Outbound Port 1883| BROKER["Eclipse Mosquitto MQTT Broker"]
+        PY_SER -->|"JSON Stream"| CORE_DISPATCH["FastAPI Dispatch & In-Memory Pipeline"]
+        CORE_DISPATCH <-->|"Optional Outbound Port 1883"| BROKER["Eclipse Mosquitto MQTT Broker"]
         CORE_DISPATCH --> SEC["HMAC-SHA256 Crypto & Replay Verifier"]
         CORE_DISPATCH --> ML["Collision Predictor (Haversine + AI Model)"]
         CORE_DISPATCH --> TOLL["Highway Infrastructure & Tollgate Manager"]
         CORE_DISPATCH --> CALL_SVC["Call Management Service (WebRTC / PSTN Bridge)"]
         CALL_SVC --> TRANS_ENG["Multi-Indian-Language Translation Engine (12 Languages)"]
         CORE_DISPATCH --> DB_ENGINE[("SQLite3 WAL Mode (14 Relational Tables)")]
-        CORE_DISPATCH -->|WebSocket @ 60 FPS (/ws)| WEB_HUD["Leaflet.js Cyberpunk SCADA HUD"]
-        CALL_SVC -->|Signaling & Audio (/ws/call/{id})| CALL_MODAL["Live Voice Call Translator Modal"]
+        CORE_DISPATCH -->|"WebSocket at 60 FPS (/ws)"| WEB_HUD["Leaflet.js Cyberpunk SCADA HUD"]
+        CALL_SVC -->|"Signaling & Audio (/ws/call/{id})"| CALL_MODAL["Live Voice Call Translator Modal"]
     end
 ```
 
@@ -367,9 +367,9 @@ sequenceDiagram
     STT->>AutoDet: Complete Utterance
     AutoDet->>TransEngine: Detected Code: 'te' (Telugu), Target: 'hi' (Hindi)
     
-    alt Tier 1: Emergency Phrase Match (< 5ms)
+    alt Tier 1: Emergency Phrase Match (under 5ms)
         TransEngine->>TransEngine: Instant Match in Offline Automotive Lexicon
-    else Tier 2: General Conversational (< 1.5s)
+    else Tier 2: General Conversational (under 1.5s)
         TransEngine->>TransEngine: Neural Indic Translation Engine
     else Tier 3: Offline Network Disconnected
         TransEngine->>TransEngine: Graceful Fallback Phrase Engine
@@ -380,11 +380,11 @@ sequenceDiagram
     TTS->>Operator: Auditory Speech Played to Tollgate Operator
 
     Note over Operator,Driver: Reverse Direction (Operator replies in Hindi -> Driver hears Telugu)
-    Operator->>OperatorUI: Speaks in Hindi: "हम तुरंत एम्बुलेंस भेज रहे हैं।"
+    Operator->>OperatorUI: Speaks in Hindi: 'हम तुरंत एम्बुलेंस भेज रहे हैं।'
     OperatorUI->>STT: Audio Stream
-    STT->>TransEngine: Translate Hindi -> Telugu
+    STT->>TransEngine: Translate Hindi to Telugu
     TransEngine->>TTS: Synthesize Telugu (te-IN)
-    TTS->>Driver: Auditory Speech: "మేము వెంటనే అంబులెన్స్‌ను పంపుతున్నాము."
+    TTS->>Driver: Auditory Speech: 'మేము వెంటనే అంబులెన్స్‌ను పంపుతున్నాము.'
 ```
 
 ### 8.1 12 Supported Indian Languages
