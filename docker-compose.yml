@@ -1,7 +1,14 @@
 version: '3.8'
 
+# ==============================================================================
+# V2V-SCADA Multi-Container Orchestration
+# Supports both:
+# 1. LOCAL DEMO MODE (Default): Unauthenticated broker on port 1883 for quick demo
+# 2. SECURE MODE: Authenticated MQTT on port 8883 with custom HMAC_SECRET
+# ==============================================================================
+
 services:
-  # Local Mosquitto MQTT Broker (Zero-Cloud / Internet-Independent)
+  # Local Mosquitto MQTT Broker (Zero-Cloud / Internet-Independent Edge Broker)
   mosquitto:
     image: eclipse-mosquitto:2.0.18
     container_name: v2v_mosquitto
@@ -10,9 +17,16 @@ services:
       - "1883:1883"
       - "8883:8883"
     volumes:
-      - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mqtt/passwd:/mosquitto/config/passwd:ro
       - mosquitto_data:/mosquitto/data
       - mosquitto_log:/mosquitto/log
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_sub -t '$$SYS/broker/uptime' -C 1 -i healthcheck || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
   # FastAPI Supervisory SCADA Backend
   backend:
@@ -24,15 +38,22 @@ services:
     ports:
       - "8000:8000"
     environment:
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - DEMO_MODE=${DEMO_MODE:-true}
       - MQTT_BROKER=mosquitto
       - MQTT_PORT=1883
-      - HMAC_SECRET=v2v_shared_secret_123
+      - MQTT_SECURITY_MODE=${MQTT_SECURITY_MODE:-demo}
+      - MQTT_USERNAME=${MQTT_USERNAME:-}
+      - MQTT_PASSWORD=${MQTT_PASSWORD:-}
+      - HMAC_SECRET=${HMAC_SECRET:-v2v_demo_secret_development_only}
       - DB_PATH=/app/database/v2v_data.db
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:8000,http://127.0.0.1:8000}
     volumes:
       - ./database:/app/database
       - ./reports:/app/reports
     depends_on:
-      - mosquitto
+      mosquitto:
+        condition: service_started
 
 volumes:
   mosquitto_data:

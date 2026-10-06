@@ -35,13 +35,18 @@
   
   SSD1306 OLED HUD   SCL / SDA         PB6 / PB7     Shared I2C1 Bus (Address 0x3C)
   Warning Buzzer     Input (+)         PB8           Active 5V Piezo Buzzer (TTC < 3.5s)
-  AEB Relay Module   IN1               PB9           Automatic Emergency Braking Trigger (TTC < 2.5s)
+  AEB Relay Module   IN1               PB9           Prototype AEB demonstration relay / braking simulation indicator (TTC < 2.5s)
   Alert LED          Anode (+)         PA8           Red Collision Warning (220Ω resistor)
   Status LED         Anode (+)         PA1           Green Radio / Heartbeat (220Ω resistor)
   
   FTDI / CP2102 USB  TXD / RXD         PA10 / PA9    USART1 Bootloader Flash & Gateway @ 115200
   FTDI Auto-Reset    DTR / RTS         NRST / BOOT0  Hardware Auto-Reset & Auto-BOOT0 (Optional)
                                                      *Manual: BOOT0=1 to Flash, BOOT0=0 to Run*
+  -------------------------------------------------------------------------------------
+  
+  CRITICAL SAFETY NOTICE:
+  THIS IS A PROTOTYPE SAFETY DEMONSTRATION SYSTEM DEVELOPED FOR BENCH/LABORATORY TESTING.
+  DO NOT CONNECT DIRECTLY TO A REAL VEHICLE BRAKING SYSTEM OR SAFETY-CRITICAL ACTUATORS.
   -------------------------------------------------------------------------------------
 */
 
@@ -66,7 +71,14 @@
 // Vehicle Identification & Type
 const String VEHICLE_ID   = "V1";
 const String VEHICLE_TYPE = "Passenger"; // Options: "Passenger", "Truck", "Emergency"
-const char* HMAC_SECRET   = "v2v_shared_secret_123"; // Must match Python backend
+
+// ============================================================================
+// Cryptographic Secret (DEVELOPMENT / DEMO ONLY):
+// WARNING: This compile-time key is strictly for offline laboratory demonstration.
+// Do NOT treat this as a production key-management system. Production automotive
+// ECUs require hardware secure elements (HSM) with KMS-derived keys.
+// ============================================================================
+const char* HMAC_SECRET   = "v2v_demo_secret_development_only"; // Must match DEMO backend
 
 // Hardware Pin Definitions
 #define PIN_GPS_RX     PA3
@@ -274,8 +286,8 @@ void applySafetyActuation(int threatLevel, float ttc, float dist, const String& 
         case 3: // CRITICAL IMMINENT COLLISION (TTC <= 2.5s)
             digitalWrite(PIN_BUZZER, HIGH);
             digitalWrite(PIN_LED_ALERT, HIGH);
-            digitalWrite(PIN_AEB_RELAY, HIGH); // Engages Emergency Braking Solenoid
-            Serial.print(F(">>> [AEB TRIGGER] CRITICAL IMMINENT COLLISION! Vehicle: "));
+            digitalWrite(PIN_AEB_RELAY, HIGH); // Engages Prototype AEB demonstration relay (simulation only)
+            Serial.print(F(">>> [AEB DEMO TRIGGER] CRITICAL IMMINENT COLLISION! Vehicle: "));
             Serial.print(peerId);
             Serial.print(F(" | Dist: "));
             Serial.print(dist, 1);
@@ -346,15 +358,16 @@ void processPeerPacket(const String& payload) {
     int peerEmergency = doc["emergency_status"] | 0;
     const char* signature = doc["signature"] | "";
 
-    // 1. HMAC-SHA256 Cryptographic Verification
-    String signString = String(peerId) +
-                        String(peerType) +
-                        String(peerTime) +
-                        String(peerSeq) +
-                        String(peerLat, 6) +
-                        String(peerLon, 6) +
-                        String(peerSpeed, 1) +
-                        String(int(round(peerHeading)));
+    // 1. HMAC-SHA256 Cryptographic Verification (Deterministic Canonical String)
+    // Format: vehicle_id=...|vehicle_type=...|timestamp=...|seq=...|lat=...|lon=...|speed_kmph=...|heading_deg=...
+    String signString = "vehicle_id=" + String(peerId) +
+                        "|vehicle_type=" + String(peerType) +
+                        "|timestamp=" + String(peerTime) +
+                        "|seq=" + String(peerSeq) +
+                        "|lat=" + String(peerLat, 6) +
+                        "|lon=" + String(peerLon, 6) +
+                        "|speed_kmph=" + String(peerSpeed, 1) +
+                        "|heading_deg=" + String(int(round(peerHeading)));
 
     String expectedSig = generateHMACSignature(signString);
     if (!expectedSig.equalsIgnoreCase(String(signature))) {
@@ -527,16 +540,16 @@ void loop() {
             unsigned long timestamp = millis() / 1000 + 1730000000;
 
             // Formulate Canonical String for HMAC-SHA256 Signing
-            // Matches backend build_signing_string():
-            // vehicle_id + vehicle_type + timestamp + seq + lat + lon + speed_kmph + heading_deg
-            String signString = VEHICLE_ID +
-                                VEHICLE_TYPE +
-                                String(timestamp) +
-                                String(sequenceNumber) +
-                                String(myLat, 6) +
-                                String(myLon, 6) +
-                                String(mySpeed, 1) +
-                                String(int(round(myHeading)));
+            // Matches backend build_canonical_signing_string():
+            // vehicle_id=...|vehicle_type=...|timestamp=...|seq=...|lat=...|lon=...|speed_kmph=...|heading_deg=...
+            String signString = "vehicle_id=" + VEHICLE_ID +
+                                "|vehicle_type=" + VEHICLE_TYPE +
+                                "|timestamp=" + String(timestamp) +
+                                "|seq=" + String(sequenceNumber) +
+                                "|lat=" + String(myLat, 6) +
+                                "|lon=" + String(myLon, 6) +
+                                "|speed_kmph=" + String(mySpeed, 1) +
+                                "|heading_deg=" + String(int(round(myHeading)));
 
             String signature = generateHMACSignature(signString);
 

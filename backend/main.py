@@ -1,6 +1,6 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, BackgroundTasks, Request, Query
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, BackgroundTasks, Request, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 import uvicorn
@@ -11,14 +11,18 @@ import time
 import json
 import math
 import random
-
+import sqlite3
+from pathlib import Path
 from typing import Optional, Dict, Any, List
+
 # Ensure backend can import sibling modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from backend.config import (
-    BASE_DIR, FRONTEND_DIR, REPORTS_DIR, MQTT_BROKER, MQTT_PORT, MQTT_TOPIC_TELEMETRY,
-    STT_PROVIDER, TRANSLATION_PROVIDER, TTS_PROVIDER, TELEPHONY_PROVIDER
+    BASE_DIR, FRONTEND_DIR, REPORTS_DIR, DB_PATH, ENVIRONMENT, DEMO_MODE,
+    MQTT_BROKER, MQTT_PORT, MQTT_TOPIC_TELEMETRY, CORS_ALLOWED_ORIGINS,
+    STT_PROVIDER, TRANSLATION_PROVIDER, TTS_PROVIDER, TELEPHONY_PROVIDER,
+    MAX_VALID_SPEED_KMPH
 )
 from backend.database import (
     init_db, get_tollgates, get_emergency_contacts, get_recent_crossings,
@@ -27,11 +31,11 @@ from backend.database import (
 )
 from backend.mqtt_client import (
     start_mqtt_client, message_queue, vehicle_states, gateway_health_state,
-    publish_or_dispatch
+    publish_or_dispatch, is_mqtt_connected, predictor
 )
 from backend.report_generator import generate_pdf_report
 from backend.translation import translate_message, SUPPORTED_LANGUAGES
-from backend.security import generate_signature
+from backend.security import generate_signature, verify_telemetry_packet
 from backend.call_service import call_manager
 from backend.providers.factory import (
     get_telephony_provider,
@@ -39,20 +43,21 @@ from backend.providers.factory import (
     get_translation_provider,
     get_tts_provider
 )
-import paho.mqtt.client as mqtt_lib
 
 app = FastAPI(
     title="Internet-Independent V2V Communication & SCADA Safety Monitoring System",
-    description="MoRTH AIS-230 Compliant STM32-based Telemetry, Collision Avoidance, and Highway V2I Platform",
-    version="2.0.0"
+    description="MoRTH AIS-230 Aligned Prototype: Telemetry, Collision Avoidance, and Highway V2I Platform",
+    version="2.1.0"
 )
 
-# CORS & Security Headers
+# ------------------------------------------------------------------------------
+# CORS & Web Security Headers
+# ------------------------------------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -118,41 +123,93 @@ async def websocket_endpoint(websocket: WebSocket):
         if websocket in connected_clients:
             connected_clients.remove(websocket)
 
-# --- System Health & Diagnostics ---
+# ------------------------------------------------------------------------------
+# System Health & Independent Subsystem Diagnostics
+# ------------------------------------------------------------------------------
 @app.get("/api/health")
 async def get_system_health():
     now = time.time()
-    gw_online = (now - gateway_health_state.get("last_seen", 0)) < 15.0
+
+    # 1. Database Connection Check
+    db_status = "unavailable"
+    try:
+        conn = sqlite3.connect(DB_PATH, timeout=2.0)
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1")
+        conn.close()
+        db_status = "healthy"
+    except Exception:
+        db_status = "unavailable"
+
+    # 2. MQTT Broker Status
+    if is_mqtt_connected:
+        mqtt_status = "connected"
+    elif DEMO_MODE:
+        mqtt_status = "autonomous_direct_dispatch"
+    else:
+        mqtt_status = "disconnected"
+
+    # 3. Hardware Gateway Status
+    gw_last = gateway_health_state.get("last_seen", 0)
+    gw_online = (now - gw_last) < 15.0 if gw_last else False
+    gw_status = "online" if gw_online else "standby"
+
+    # 4. Machine Learning Model Status
+    ml_loaded = predictor is not None and predictor.model is not None
+    ml_status = "loaded" if ml_loaded else "rule_based_fallback"
+
+    # 5. Composite System Status Evaluation
+    if db_status == "healthy" and (is_mqtt_connected or DEMO_MODE):
+        overall_status = "healthy"
+    elif db_status == "healthy":
+        overall_status = "degraded"
+    else:
+        overall_status = "unhealthy"
+
     return {
-        "status": "healthy",
+        "status": overall_status,
+        "backend": "online",
+        "database": db_status,
+        "mqtt": mqtt_status,
+        "gateway": gw_status,
+        "ml_model": ml_status,
         "timestamp": int(now),
-        "architecture": "STM32F103 / SX1281 2.4GHz RF",
-        "mqtt_broker": {
-            "host": MQTT_BROKER,
-            "port": MQTT_PORT,
-            "status": "connected"
+        "environment": ENVIRONMENT,
+        "demo_mode": DEMO_MODE,
+        "architecture": "STM32 ARM Cortex-M / Semtech SX1281 2.4GHz RF Prototype",
+        "subsystems": {
+            "backend": "online",
+            "database": db_status,
+            "mqtt": mqtt_status,
+            "gateway": gw_status,
+            "ml_model": ml_status,
+            "mqtt_broker": {
+                "host": MQTT_BROKER,
+                "port": MQTT_PORT,
+                "status": mqtt_status
+            },
+            "gateway_node": {
+                "status": gw_status,
+                "port": gateway_health_state.get("port", "COM3"),
+                "packets_rx": gateway_health_state.get("packets_rx", 0)
+            },
+            "ml_collision_model": ml_status,
+            "active_vehicles_count": len(vehicle_states),
+            "connected_scada_clients": len(connected_clients)
         },
-        "gateway_node": {
-            "status": "Online" if gw_online else "Standby",
-            "port": gateway_health_state.get("port", "COM3"),
-            "rf_frequency": gateway_health_state.get("rf_frequency", "2.4GHz FLRC/LoRa"),
-            "packets_rx": gateway_health_state.get("packets_rx", 0)
-        },
-        "active_vehicles_count": len(vehicle_states),
-        "connected_scada_clients": len(connected_clients),
-        "database": "SQLite (WAL Mode)",
         "voice_translation_system": {
-            "status": "Online (Continuous Real-Time)",
             "telephony_provider": TELEPHONY_PROVIDER,
             "stt_provider": STT_PROVIDER,
             "translation_provider": TRANSLATION_PROVIDER,
             "tts_provider": TTS_PROVIDER,
             "supported_indian_languages": len(get_supported_languages()),
-            "offline_safety_isolation": "Guaranteed — V2V RF, Collision & GPS completely independent of telephony/cloud"
+            "operational_isolation": "Core V2V RF, collision calculation, and GPS telemetry operate independently of voice/cloud services"
         }
     }
 
-# --- Vehicles & Telemetry APIs ---
+# ------------------------------------------------------------------------------
+# Vehicles & Telemetry APIs
+# ------------------------------------------------------------------------------
 @app.get("/api/vehicles")
 async def get_active_vehicles():
     return {
@@ -160,21 +217,61 @@ async def get_active_vehicles():
         "registered_directory": get_vehicles_list()
     }
 
+class TelemetryPayload(BaseModel):
+    vehicle_id: str
+    vehicle_type: str = "Passenger"
+    timestamp: int
+    seq: int = Field(ge=0, description="Monotonically increasing sequence number")
+    lat: float = Field(ge=-90.0, le=90.0, description="Latitude in degrees")
+    lon: float = Field(ge=-180.0, le=180.0, description="Longitude in degrees")
+    alt: float = 0.0
+    speed_kmph: float = Field(ge=0.0, le=MAX_VALID_SPEED_KMPH, description="Ground speed in km/h")
+    heading_deg: float = Field(ge=0.0, le=360.0, description="Compass heading 0-360 degrees")
+    pitch_deg: float = Field(default=0.0, ge=-90.0, le=90.0)
+    roll_deg: float = Field(default=0.0, ge=-90.0, le=90.0)
+    yaw_deg: float = Field(default=0.0, ge=0.0, le=360.0)
+    battery_level: float = Field(default=100.0, ge=0.0, le=100.0)
+    emergency_status: int = Field(default=0, ge=0, le=1)
+    rf_status: str = "OK"
+    fault_code: str = "NONE"
+    signature: str
+
 @app.post("/api/telemetry")
-async def ingest_telemetry(payload: Dict[str, Any]):
+async def ingest_telemetry(payload: TelemetryPayload):
     """
-    Ingest vehicle telemetry directly via HTTP POST.
-    Dispatches to MQTT or internal real-time pipeline.
+    Ingest vehicle telemetry via HTTP POST.
+    Enforces schema bounds, HMAC-SHA256 signature verification,
+    timestamp freshness, and sequence anti-replay prior to dispatch.
     """
-    raw_json = json.dumps(payload)
+    payload_dict = payload.model_dump() if hasattr(payload, "model_dump") else payload.dict()
+    raw_json = json.dumps(payload_dict)
+
+    is_valid, verified_data, reason = verify_telemetry_packet(raw_json)
+    if not is_valid:
+        status_code = 401 if ("SIGNATURE" in str(reason) or "HMAC" in str(reason)) else 400
+        return JSONResponse(
+            status_code=status_code,
+            content={
+                "status": "rejected",
+                "reason": reason,
+                "vehicle_id": payload.vehicle_id,
+                "detail": f"HMAC signature verification failed: {reason}",
+                "message": "Telemetry packet failed cryptographic or anti-replay verification."
+            }
+        )
+
     publish_or_dispatch(MQTT_TOPIC_TELEMETRY, raw_json)
     return {
-        "status": "success",
-        "vehicle_id": payload.get("vehicle_id", "UNKNOWN"),
+        "status": "processed",
+        "vehicle_id": payload.vehicle_id,
+        "seq": payload.seq,
         "received_at": int(time.time())
     }
 
-# --- Highway Route & Tollgate APIs ---
+
+# ------------------------------------------------------------------------------
+# Highway Route & Tollgate APIs
+# ------------------------------------------------------------------------------
 @app.get("/api/tollgates")
 async def fetch_tollgates():
     return {"tollgates": get_tollgates()}
@@ -187,8 +284,9 @@ async def fetch_tollgate_crossings(limit: int = 50):
 async def fetch_emergency_contacts():
     return {"contacts": get_emergency_contacts()}
 
-# --- Real-Time Multi-Indian-Language Voice Call & Translation APIs ---
-
+# ------------------------------------------------------------------------------
+# Real-Time Multi-Indian-Language Voice Call & Translation APIs
+# ------------------------------------------------------------------------------
 class StartCallRequest(BaseModel):
     vehicle_id: str = "DEMO-1"
     tollgate_id: str = "TG-DEMO"
@@ -237,7 +335,6 @@ class CallLogRequest(BaseModel):
     category: str
     highway: str = "NH-65"
 
-# 1. Start Voice Call
 @app.post("/calls/start")
 @app.post("/api/calls/start")
 async def start_voice_call(req: StartCallRequest):
@@ -255,7 +352,6 @@ async def start_voice_call(req: StartCallRequest):
     })
     return call_data
 
-# 2. End Voice Call
 @app.post("/calls/end")
 @app.post("/api/calls/end")
 async def end_voice_call(req: EndCallRequest):
@@ -266,7 +362,6 @@ async def end_voice_call(req: EndCallRequest):
     })
     return result
 
-# 3. Get Call Details & Status
 @app.get("/calls/{call_id}")
 @app.get("/api/calls/{call_id}")
 async def get_call_status(call_id: str):
@@ -275,7 +370,6 @@ async def get_call_status(call_id: str):
         return JSONResponse(status_code=404, content={"error": f"Call session {call_id} not found"})
     return summary
 
-# 4. Translation Session Creation / Query
 @app.post("/translation/session")
 @app.post("/api/translation/session")
 async def create_translation_session_endpoint(req: TranslationSessionRequest):
@@ -289,7 +383,6 @@ async def create_translation_session_endpoint(req: TranslationSessionRequest):
         "status": "ACTIVE"
     }
 
-# 5. Audio / Speech Translation Packet Processing
 @app.post("/translation/audio")
 @app.post("/api/translation/audio")
 async def process_translation_audio(req: AudioTranslationRequest):
@@ -306,21 +399,18 @@ async def process_translation_audio(req: AudioTranslationRequest):
     )
     return turn_res
 
-# 6. Supported Languages (12+ Indian Languages)
 @app.get("/translation/languages")
 @app.get("/api/translation/languages")
 async def get_supported_indian_languages():
     languages = get_supported_languages()
     return {"languages": languages, "count": len(languages)}
 
-# 7. Translation History for Call
 @app.get("/translation/history/{call_id}")
 @app.get("/api/translation/history/{call_id}")
 async def get_call_history(call_id: str, limit: int = 100):
     messages = get_call_messages(call_id, limit=limit)
     return {"call_id": call_id, "messages": messages, "count": len(messages)}
 
-# 8. Share Emergency Incident Telemetry (With User Confirmation)
 @app.post("/calls/{call_id}/share-incident")
 @app.post("/api/calls/{call_id}/share-incident")
 async def share_incident_endpoint(call_id: str, req: IncidentShareRequest):
@@ -328,7 +418,6 @@ async def share_incident_endpoint(call_id: str, req: IncidentShareRequest):
         return {"status": "cancelled", "message": "Incident transmission cancelled by user"}
     return await call_manager.share_incident_dossier(call_id)
 
-# 9. Simulation Turn for Testing Any Language Pair
 @app.post("/calls/simulate-turn")
 @app.post("/api/calls/simulate-turn")
 async def simulate_turn_endpoint(req: SimulateTurnRequest):
@@ -341,7 +430,6 @@ async def simulate_turn_endpoint(req: SimulateTurnRequest):
     )
     return {"status": "success", "turn": turn}
 
-# 10. WebRTC & WebSocket Real-Time Voice Channel
 @app.websocket("/ws/call/{call_id}")
 async def call_websocket_endpoint(websocket: WebSocket, call_id: str):
     await websocket.accept()
@@ -378,7 +466,6 @@ async def call_websocket_endpoint(websocket: WebSocket, call_id: str):
     except Exception:
         call_manager.unregister_socket(call_id, websocket)
 
-# Backward-compatible endpoints
 @app.post("/api/translate")
 async def handle_translation(req: TranslationRequest):
     result = translate_message(
@@ -406,8 +493,9 @@ async def log_call_attempt(req: CallLogRequest):
     await message_queue.put(event)
     return {"status": "success", "event": event}
 
-
-# --- Incident & Security Audit APIs ---
+# ------------------------------------------------------------------------------
+# Incident & Security Audit APIs
+# ------------------------------------------------------------------------------
 @app.get("/api/incidents")
 async def fetch_incidents(limit: int = 50):
     return {"incidents": get_recent_incidents(limit)}
@@ -424,12 +512,41 @@ async def generate_report():
 
 @app.get("/api/download/{filename}")
 async def download_report(filename: str):
-    filepath = os.path.join(REPORTS_DIR, filename)
-    if os.path.exists(filepath):
-        return FileResponse(filepath, media_type='application/pdf', filename=filename)
-    return JSONResponse(status_code=404, content={"error": "File not found"})
+    """
+    Secure file download endpoint.
+    Guards against directory traversal by verifying canonical paths
+    and strictly whitelisting allowed PDF files.
+    """
+    if ".." in filename or "/" in filename or "\\" in filename:
+        return JSONResponse(
+            status_code=400,
+            content={"error": "Path traversal pattern rejected."}
+        )
 
-# --- Demonstration & Simulation Simulation Runner ---
+    if not filename.lower().endswith(".pdf"):
+        return JSONResponse(
+            status_code=400,
+            content={"error": "Unauthorized file type. Only PDF reports can be downloaded."}
+        )
+
+    target_path = (REPORTS_DIR / filename).resolve()
+    reports_root = REPORTS_DIR.resolve()
+
+    # Verify target path is strictly inside reports directory
+    try:
+        if not target_path.is_relative_to(reports_root):
+            return JSONResponse(status_code=400, content={"error": "Access denied: Path outside reports folder."})
+    except AttributeError:
+        if not str(target_path).startswith(str(reports_root)):
+            return JSONResponse(status_code=400, content={"error": "Access denied: Path outside reports folder."})
+
+    if target_path.is_file() and target_path.exists():
+        return FileResponse(str(target_path), media_type='application/pdf', filename=filename)
+    return JSONResponse(status_code=404, content={"error": "Report file not found."})
+
+# ------------------------------------------------------------------------------
+# Simulation & Spoof Testing Emitters
+# ------------------------------------------------------------------------------
 is_demo_running = False
 
 def run_demo_simulation():
@@ -446,7 +563,6 @@ def run_demo_simulation():
         except Exception:
             routes = None
 
-        # 4 OSRM-routed vehicles passing near Jubilee Hills / NH-65 Tollgate
         routed_vehicles = [
             {"idx": 0.0, "speed": 48.0, "heading": 90.0,  "type": "Passenger", "lat": 17.4239, "lon": 78.4400, "route": "v1", "rate": 0.16},
             {"idx": 0.0, "speed": 52.0, "heading": 270.0, "type": "Passenger", "lat": 17.4239, "lon": 78.4550, "route": "v2", "rate": 0.22},
@@ -470,8 +586,6 @@ def run_demo_simulation():
                         v['idx'] = 0.0
 
                 v['speed'] = max(15.0, min(110.0, v['speed'] + random.uniform(-0.6, 0.6)))
-
-                # Dynamic orientation simulation (roll during swerving, pitch during speed changes)
                 pitch = round(math.sin(time.time() * 2 + idx) * 1.8, 1)
                 roll = round(math.cos(time.time() * 1.5 + idx) * 2.5, 1)
 

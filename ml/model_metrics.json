@@ -1,0 +1,59 @@
+{
+  "prototype_note": "Trained on synthetic kinematic dataset derived from TTC formulas.",
+  "random_seed": 42,
+  "test_samples": 1000,
+  "accuracy": 0.996,
+  "precision_weighted": 0.996,
+  "recall_weighted": 0.996,
+  "f1_score_weighted": 0.996,
+  "confusion_matrix": [
+    [
+      567,
+      1,
+      0
+    ],
+    [
+      0,
+      231,
+      3
+    ],
+    [
+      0,
+      0,
+      198
+    ]
+  ],
+  "class_report": {
+    "0": {
+      "precision": 1.0,
+      "recall": 0.9982394366197183,
+      "f1-score": 0.9991189427312775,
+      "support": 568.0
+    },
+    "1": {
+      "precision": 0.9956896551724138,
+      "recall": 0.9871794871794872,
+      "f1-score": 0.9914163090128757,
+      "support": 234.0
+    },
+    "2": {
+      "precision": 0.9850746268656716,
+      "recall": 1.0,
+      "f1-score": 0.9924812030075187,
+      "support": 198.0
+    },
+    "accuracy": 0.996,
+    "macro avg": {
+      "precision": 0.993588094012695,
+      "recall": 0.9951396412664018,
+      "f1-score": 0.9943388182505574,
+      "support": 1000.0
+    },
+    "weighted avg": {
+      "precision": 0.9960361554297479,
+      "recall": 0.996,
+      "f1-score": 0.9960022539758673,
+      "support": 1000.0
+    }
+  }
+}

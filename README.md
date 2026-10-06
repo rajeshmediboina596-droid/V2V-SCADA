@@ -1,19 +1,19 @@
-# 🚗⚡ Internet-Independent V2V Communication & SCADA Safety Monitoring System
-### Compliant with Government of India (MoRTH) AIS-230 Mandate • STM32 ARM Cortex-M Ecosystem • 12 Indian Languages Voice HUD
+# 🚗⚡ V2V-SCADA: Internet-Independent Vehicle-to-Vehicle Safety & Highway Telemetry System
+### Final-Year Engineering Prototype • STM32 ARM Cortex-M Ecosystem • Aligned with MoRTH AIS-230 Concepts • Modular Indic Voice Dispatch
 
 <div align="center">
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-rajeshmediboina596--droid%2FV2V--SCADA-181717.svg?style=for-the-badge&logo=github)](https://github.com/rajeshmediboina596-droid/V2V-SCADA)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Hardware: STM32F103 | SX1281 2.4GHz](https://img.shields.io/badge/Hardware-STM32%20%7C%20SX1281%202.4GHz-brightgreen.svg?style=for-the-badge)](#5-hardware-wiring--pin-assignment-table)
-[![Standard: MoRTH AIS-230](https://img.shields.io/badge/Compliance-MoRTH%20AIS--230-orange.svg?style=for-the-badge)](#12-morth-ais-230-regulatory-compliance--standards-alignment)
-[![Languages: 12 Indian Languages](https://img.shields.io/badge/Voice%20Call%20Translator-12%20Indian%20Languages-purple.svg?style=for-the-badge)](#8-real-time-multi-indian-language-voice-call-translator-module)
+[![Standards: MoRTH AIS-230 Aligned](https://img.shields.io/badge/Standard-MoRTH%20AIS--230%20Concepts-orange.svg?style=for-the-badge)](#12-morth-ais-230-regulatory-alignment--standards-context)
+[![Voice HUD: 12 Indian Languages](https://img.shields.io/badge/Voice%20Dispatch-12%20Indian%20Languages-purple.svg?style=for-the-badge)](#8-real-time-multi-indian-language-voice-call-translator-module)
 [![Backend: FastAPI / WebSockets](https://img.shields.io/badge/Backend-FastAPI%20%7C%20WebSockets%20%7C%20MQTT-009688.svg?style=for-the-badge)](#6-software-stack--dependencies)
-[![Security: HMAC-SHA256 Anti-Replay](https://img.shields.io/badge/Security-HMAC--SHA256%20%7C%20DPI%20Hex-red.svg?style=for-the-badge)](#11-cyber-security--anti-replay-cryptographic-engine)
-[![Tests: 9/9 Master QA Passed](https://img.shields.io/badge/Tests-9%2F9%20QA%20Suites%20Passed-success.svg?style=for-the-badge)](#17-testing-benchmarking--verification)
+[![Security: HMAC-SHA256 Anti-Replay](https://img.shields.io/badge/Security-HMAC--SHA256%20%7C%20Anti--Replay-red.svg?style=for-the-badge)](#11-cyber-security--anti-replay-cryptographic-engine)
+[![Tests: 21/21 Unit & Integration Passed](https://img.shields.io/badge/Tests-21%2F21%20Pytest%20Passed-success.svg?style=for-the-badge)](#17-testing-benchmarking--verification)
 
 <p align="center">
-  <b>An industrial-grade, 100% cellular-free Vehicle-to-Vehicle (V2V) collision avoidance, emergency voice dispatch, and intelligent highway SCADA telemetry monitoring platform.</b>
+  <b>An academic engineering prototype demonstrating cellular-independent Vehicle-to-Vehicle (V2V) cooperative collision avoidance, emergency voice dispatch, and intelligent highway SCADA telemetry monitoring.</b>
 </p>
 
 [ 🚀 Quickstart ](#16-installation--step-by-step-execution-guide) •
@@ -22,6 +22,7 @@
 [ 🎙️ Indic Voice Call HUD ](#8-real-time-multi-indian-language-voice-call-translator-module) •
 [ 🛡️ Cybersecurity ](#11-cyber-security--anti-replay-cryptographic-engine) •
 [ 🧪 Test Suite ](#17-testing-benchmarking--verification) •
+[ ⚠️ Limitations ](#18-prototype-limitations--engineering-caveats) •
 [ 📖 API Reference ](#14-rest-api--websocket-protocol-reference)
 
 </div>
@@ -30,25 +31,28 @@
 
 ## ⚡ System At A Glance
 
-| Metric / Feature | Specification | Engineering Benefit |
-|:---|:---|:---|
-| **RF Air Latency** | **`< 3.0 ms`** (Sub-3ms peer-to-peer broadcast) | 10x faster than 4G/5G C-V2X roundtrips; immediate edge response. |
-| **Cellular & Cloud Dependency** | **`0.0%`** (100% Internet & SIM-Card Independent) | Operates in rural ghat sections, mountain tunnels, and cellular dead zones. |
-| **RF Wireless Protocol** | **Semtech SX1280/SX1281 (2.4 GHz FLRC / LoRa)** | High-speed 1.3 Mbps FLRC mode, 1.0–2.0 km range, license-free ISM band. |
-| **Compute Core** | **STM32 ARM Cortex-M (STM32F103 / STM32F411)** | Deterministic real-time OS, dual hardware USART, SPI, I2C, independent watchdog. |
-| **Telemetry Update Rate** | **`10 Hz` (Every 100 ms)** | Fully compliant with Ministry of Road Transport and Highways (MoRTH) AIS-230. |
-| **Emergency Voice Dispatch** | **12 Indian Languages** (Continuous WebRTC) | Overcomes interstate language barriers between truckers and toll operators. |
-| **Orientation Sensing** | **3D Attitude (Absolute Heading, Pitch, Roll)** | Real-time slope calculation, rollover hazard detection, and GPS dead-reckoning. |
-| **Automatic Braking (AEB)** | **Hardware Relay Trigger at TTC $\le$ 2.5s** | Instantaneous solenoid actuation preventing fatal rear-end/head-on crashes. |
-| **Cryptographic Security** | **HMAC-SHA256 + 30s Anti-Replay + Monotonic Seq** | Complete immunity against "Ghost Vehicle" packet injection and spoofing. |
-| **SCADA Host Architecture** | **FastAPI + WebSockets (60 FPS) + SQLite WAL** | Ingests 150+ packets/sec with async batching into 14 relational tables. |
-| **Flashing Convenience** | **Pure-Python Serial Flasher (`tools/flash_stm32_ftdi.py`)** | Programs STM32 via USB-to-UART (FTDI/CP2102) with **Zero ST-Link required**! |
+Every claim and technical metric in this repository is explicitly tagged to indicate its engineering verification status:
+`[IMPLEMENTED]` (functional in repository code) • `[SIMULATED]` (evaluated via software testbed) • `[DESIGNED]` (architected link specification) • `[TARGET]` (design goal requiring physical RF measurement).
+
+| Metric / Capability | Engineering Status | Specification | Architectural Note |
+|:---|:---:|:---|:---|
+| **Core Safety Autonomy** | **`[IMPLEMENTED]`** | **100% Cellular & SIM-Card Free** | Core telemetry, collision calculation, and local alerts operate peer-to-peer without cellular/cloud dependence. |
+| **RF Wireless Protocol** | **`[DESIGNED]`** | **Semtech SX1280/SX1281 (2.4 GHz)** | High-speed 1.3 Mbps FLRC mode; expected 1–2 km line-of-sight design range (requires open-field validation). |
+| **RF Latency Target** | **`[TARGET]`** | **`< 3.0 ms` design target** | Calculated PHY transmission target; end-to-end latency requires oscilloscope/logic analyzer measurement. |
+| **Microcontroller Core** | **`[IMPLEMENTED]`** | **STM32 ARM Cortex-M (F103 Blue Pill)** | Deterministic C++ firmware, hardware SPI, dual USART, hardware I2C, and watchdog timer. |
+| **Telemetry Update Rate** | **`[IMPLEMENTED]`** | **`10 Hz` (Every 100 ms)** | Broadcast cadence aligned with MoRTH AIS-230 architectural recommendations. |
+| **Collision Threat Physics** | **`[IMPLEMENTED]`** | **Haversine + Relative Motion + TTC** | Computes 2D line-of-sight closing velocity and triggers multi-tier warnings (TTC $\le 5.0\text{s}$, $3.5\text{s}$, $2.5\text{s}$). |
+| **AEB Braking Indicator** | **`[IMPLEMENTED]`** | **Demonstration Relay Trigger at TTC $\le$ 2.5s** | **Laboratory simulation only**. Relay acts as visual/bench actuator indicator; not connected to actual vehicle brakes. |
+| **Cryptographic Security** | **`[IMPLEMENTED]`** | **HMAC-SHA256 + 30s Anti-Replay + Monotonic Seq** | Rejects rogue packets, tampered GPS/speed data, expired timestamps, and sequence regressions. |
+| **Collision Risk AI** | **`[SIMULATED]`** | **Scikit-Learn Classifier (Accuracy: 99.6%)** | Prototype model trained on synthetic kinematic TTC data with automatic rule-based fallback. |
+| **Emergency Voice Dispatch** | **`[IMPLEMENTED]`** | **12 Indian Languages (WebRTC / Browser API)** | In-browser speech recognition and synthesis with offline Indic emergency lexicon dictionary. |
+| **SCADA Host Workstation** | **`[IMPLEMENTED]`** | **FastAPI + WebSockets (60 FPS) + SQLite WAL** | Ingests live telemetry, streams to cybernetic Leaflet dashboard, and generates PDF incident audits. |
 
 ---
 
 ## Table of Contents
 1. [Executive Summary & Abstract](#1-executive-summary--abstract)
-2. [Problem Statement & Engineered Solutions](#2-problem-statement--engineered-solutions)
+2. [Problem Statement & Engineered Architecture](#2-problem-statement--engineered-architecture)
 3. [End-to-End System Architecture](#3-end-to-end-system-architecture)
 4. [Hardware Requirements & Bill of Materials (BOM)](#4-hardware-requirements--bill-of-materials-bom)
 5. [Hardware Wiring & Pin Assignment Table](#5-hardware-wiring--pin-assignment-table)
@@ -58,44 +62,66 @@
 9. [Highway Infrastructure (V2I) & Tollgate Awareness Module](#9-highway-infrastructure-v2i--tollgate-awareness-module)
 10. [AIS-230 Telemetry Packet Specification](#10-ais-230-telemetry-packet-specification)
 11. [Cyber-Security & Anti-Replay Cryptographic Engine](#11-cyber-security--anti-replay-cryptographic-engine)
-12. [MoRTH AIS-230 Regulatory Compliance & Standards Alignment](#12-morth-ais-230-regulatory-compliance--standards-alignment)
+12. [MoRTH AIS-230 Regulatory Alignment & Standards Context](#12-morth-ais-230-regulatory-alignment--standards-context)
 13. [Database Architecture (SQLite WAL Mode)](#13-database-architecture-sqlite-wal-mode)
 14. [REST API & WebSocket Protocol Reference](#14-rest-api--websocket-protocol-reference)
 15. [Repository Directory Structure](#15-repository-directory-structure)
 16. [Installation & Step-by-Step Execution Guide](#16-installation--step-by-step-execution-guide)
 17. [Testing, Benchmarking & Verification](#17-testing-benchmarking--verification)
-18. [Troubleshooting & Gotchas](#18-troubleshooting--gotchas)
-19. [License & Attribution](#license--attribution)
+18. [Prototype Limitations & Engineering Caveats](#18-prototype-limitations--engineering-caveats)
+19. [Troubleshooting & Gotchas](#19-troubleshooting--gotchas)
+20. [License & Attribution](#20-license--attribution)
 
 ---
 
 ## 1. Executive Summary & Abstract
 
-Road traffic collisions remain one of the foremost causes of severe trauma and mortality on Indian national and state highways. A disproportionate number of multi-vehicle collisions occur due to **Non-Line-of-Sight (NLOS)** conditions—including sharp mountain curves, heavy blinding monsoon fog, dust storms, and oversized freight trucks obstructing optical visibility. Conventional Advanced Driver Assistance Systems (ADAS) depend on optical cameras, LiDAR, and radar, which are incapable of penetrating physical barriers or looking around blind corners. Furthermore, cloud-based connected vehicle (V2X) architectures rely on 4G/5G cellular towers, rendering them useless in rural ghat corridors, mountain tunnels, and network blind spots.
 
-Recognizing these systemic challenges, the **Ministry of Road Transport and Highways (MoRTH), Government of India**, published the **AIS-230 (Automotive Industry Standard 230)** directive, mandating dedicated direct Vehicle-to-Vehicle (V2V) safety communications across production vehicles in India.
+Road traffic collisions remain a primary cause of severe trauma on Indian national and state highways. A disproportionate number of fatal multi-vehicle crashes occur under **Non-Line-of-Sight (NLOS)** conditions—including blind mountain curves, monsoon downpours, dust storms, and oversized freight convoys obstructing optical visibility. Conventional optical cameras, LiDAR, and radar are incapable of looking around physical obstacles or through heavy transport vehicles. Furthermore, commercial connected vehicle (C-V2X) architectures that rely on 4G/5G cellular towers fail in rural ghat sections, mountain tunnels, and network blind spots.
 
-This project implements an end-to-end, industrial-grade, **100% Internet-Independent V2V Communication and Supervisory Control and Data Acquisition (SCADA) Safety Monitoring System**. Built on high-performance **STM32 32-bit ARM Cortex-M** microcontrollers and **Semtech SX1281 2.4GHz RF transceivers**, the platform operates on a peer-to-peer localized RF broadcast mesh with **sub-3 millisecond transmission latency** and **1.0 to 2.0 km line-of-sight range** without relying on SIM cards, satellite internet, or cellular towers.
+Recognizing these challenges, the **Ministry of Road Transport and Highways (MoRTH), Government of India**, introduced the **AIS-230** framework to explore dedicated direct Vehicle-to-Vehicle (V2V) safety communications.
 
-### Core Distinctions of this System
-- **100% Cellular & Internet Independent**: Core life-safety telemetry, collision threat detection, and automated emergency braking triggers operate peer-to-peer directly between vehicles.
-- **MoRTH AIS-230 & Automotive Grade**: Migrated from hobbyist microcontrollers to automotive-standard STM32 microcontrollers with hardware SPI, dual USART, hardware I2C, and independent watchdog timers.
-- **Real-Time Multi-Indian-Language Voice Call Translator**: A bidirectional, continuous speech-to-speech voice pipeline supporting **12 Indian languages** (Telugu, Hindi, Tamil, Kannada, Malayalam, Marathi, Bengali, Gujarati, Punjabi, Odia, Assamese, English) with automatic script identification, offline emergency lexicons, and WebRTC duplex voice channels between drivers and highway tollgate operators.
-- **Cryptographic Anti-Spoofing & Replay Defense**: Military-grade **HMAC-SHA256 authentication** with monotonic sequence numbers and 30-second timestamp freshness windows to eliminate "Ghost Vehicle" injection and RF replay attacks.
-- **High-Fidelity SCADA Cockpit HUD**: A dark/light theme cybernetic SCADA dashboard featuring 60 FPS vehicle tracking on interactive Leaflet maps, live Chart.js speed dynamics, Deep Packet Inspection (DPI) hex feeds, highway tollgate arrival telemetry, and automated PDF audit report generation.
+This project implements an end-to-end **V2V Communication and Supervisory Control and Data Acquisition (SCADA) Safety Monitoring System** developed as a final-year engineering prototype and research testbed. The system combines:
+1. **Physical Edge Nodes**: STM32 ARM Cortex-M microcontrollers paired with Semtech SX1281 2.4 GHz transceivers, GNSS positioning, and IMU orientation sensors.
+2. **Cryptographic Integrity**: Canonical HMAC-SHA256 packet signing and anti-replay windowing to reject rogue injection and spoofed telemetry.
+3. **Deterministic Collision Mathematics**: Geodesic Haversine separation and Cartesian relative closing velocity calculations yielding Time-to-Collision (TTC) alerts.
+4. **Supervisory SCADA Workstation**: High-frequency FastAPI web backend with 60 FPS WebSocket streaming, interactive Leaflet geospatial HUD, and automated PDF audit generation.
+5. **Modular Multilingual Dispatch**: WebRTC and browser-based speech translation covering 12 Indian languages for roadside incident coordination.
 
 ---
 
-## 2. Problem Statement & Engineered Solutions
+## 2. Problem Statement & Engineered Architecture
 
-| # | Highway Safety Challenge | Conventional System Failure | Project Engineered Solution |
-|:---:|:---|:---|:---|
-| **1** | **Blind Spots & NLOS Curves** | Cameras and radars cannot penetrate oversized trucks or see around mountain hairpin turns. | **360° Omnidirectional 2.4GHz RF Broadcast**: STM32 edge nodes broadcast 10Hz signed telemetry, enabling surrounding vehicles to detect hazards up to 1.5 km away and calculate Time-to-Collision (TTC) within 3ms. |
-| **2** | **Internet & Cellular Dead Zones** | Cloud V2X (4G/5G C-V2X) fails in rural ghat corridors, tunnels, and unpopulated highway stretches. | **100% Offline RF Mesh (Semtech SX1281)**: Operates on 2.4GHz FLRC (Fast Long-Range Communication) mode at 1.3 Mbps with zero cellular dependency, zero SIM cards, and zero cloud subscription fees. |
-| **3** | **Inter-State Language Barriers** | Non-local commercial truck drivers crossing state borders cannot communicate during highway emergencies. | **Continuous Multi-Indian-Language Voice Translator**: Full-duplex speech-to-speech bridge across 12 Indian languages with automatic dialect/script detection and offline emergency phrases. |
-| **4** | **Cyber-Attacks & GPS Spoofing** | Unencrypted CAN/RF broadcasts allow adversaries to inject fake telemetry, triggering panic braking. | **HMAC-SHA256 Cryptography & Anti-Replay**: Every packet is signed with SHA256 and validated using monotonic sequence numbers; rogue packets are dropped and flagged on SCADA DPI. |
-| **5** | **Delayed Emergency Vehicle Passage** | Ambulances lose critical time trapped behind civilian traffic because sirens are inaudible through soundproof cabins. | **Automated 200m Emergency Yield Alert**: Emergency vehicles broadcast high-priority SOS telemetry that triggers an immediate cockpit yield alert on civilian vehicle HUDs. |
-| **6** | **Tollgate Congestion & Logistics** | Drivers lack awareness of segment-specific tollgate phone numbers, nearby trauma hospitals, and police contacts. | **V2I Highway Route & Tollgate Engine**: Automated 500m approach detection, stateful tollgate crossed alerts, distance/ETA trackers, and emergency incident dossier transmission. |
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│               CORE SAFETY PATH (100% Offline / Zero Cellular or Cloud Dependency)       │
+│                                                                                        │
+│   STM32 Microcontroller Edge Node (Blue Pill ARM Cortex-M)                             │
+│   └── Ingests U-blox GNSS (10Hz) & IMU Orientation Dynamics                           │
+│   └── Generates Canonical HMAC-SHA256 Cryptographic Signature                          │
+│   └── Broadcasts 2.4 GHz RF Packets via Semtech SX1281 (FLRC mode)                     │
+│         ▼                                                                              │
+│   Peer Vehicles Receive Packet Directly via 2.4 GHz RF Antenna                         │
+│   └── Verifies Cryptographic Signature & Monotonic Sequence Number                     │
+│   └── Computes Geodesic Distance (Haversine) & Relative Closing Velocity               │
+│   └── Calculates Time-to-Collision (TTC) & Threat Level (Safe/Advisory/Warning/Critical)│
+│   └── Actuates In-Cabin OLED HUD, Buzzer, and AEB Demonstration Relay                   │
+│   └── (Optional) Uplinks to Roadside Unit (RSU) Gateway via USB Serial for SCADA       │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+                                            │ (Optional Serial / USB Bridge)
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│            OPTIONAL COMMUNICATION PATH (Browser / Configured External Providers)       │
+│                                                                                        │
+│   SCADA Browser Console / In-Cabin Web Interface                                       │
+│   └── Full-Duplex Audio & WebRTC Signaling (WebRTCTelephonyProvider)                   │
+│   └── Speech-to-Text Recognition (Web Speech API / Optional Cloud ASR)                 │
+│   └── Multi-Indian-Language Translation Engine (Tier-1 Indic Lexicon + Neural Bridge)  │
+│   └── Text-to-Speech Synthesis (Browser Speech Synthesis / Optional Neural TTS)        │
+│   └── Privacy-Confirmed Emergency Telemetry Dossier Sharing to Tollgate Console        │
+│   *Note: Optional voice features depend on configured browser APIs or network services*│
+└────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
 
 ---
 
@@ -471,36 +497,45 @@ Every vehicle node broadcasts a 10Hz cryptographic telemetry packet conforming t
 
 ## 11. Cyber-Security & Anti-Replay Cryptographic Engine
 
+The telemetry ingest pipeline implements deterministic cryptographic verification to protect against unauthorized packet injection, GPS spoofing, and RF replay:
+
 ```
-[Incoming RF Packet]
+[Incoming RF / HTTP Telemetry Packet]
         |
         +---> 1. Timestamp Freshness Check: |time.time() - packet.timestamp| <= 30.0s?
-        |            |-- No  --> DROP (REPLAY_ATTACK_EXPIRED)
+        |            |-- No  --> DROP (TIMESTAMP_EXPIRED)
         |
         +---> 2. Sequence Monotonicity Check: packet.seq > last_seq[vehicle_id]?
-        |            |-- No  --> DROP (REPLAY_ATTACK_SEQUENCE_REWIND)
+        |            |-- (Node reboot check: if seq <= 5 and time advanced, reset sequence)
+        |            |-- No  --> DROP (REPLAY_SEQUENCE_DUPLICATE)
         |
-        +---> 3. HMAC-SHA256 Cryptographic Verification:
+        +---> 3. Canonical HMAC-SHA256 Verification:
                      constant_time_compare(hmac(secret_key, canonical_payload), signature)?
-                     |-- No  --> DROP & TRIGGER SCADA INTRUSION ALARM (HMAC_MISMATCH)
+                     |-- No  --> DROP & LOG SECURITY AUDIT EVENT (HMAC_SIGNATURE_MISMATCH)
                      |-- Yes --> VALIDATED -> Dispatch to Collision Engine & SCADA HUD
 ```
 
 ### Deep Packet Inspection (DPI) Feed
-The SCADA interface includes a real-time Deep Packet Inspection hex viewer. Verified packets display with `[RF_2.4G] CRC:OK | HMAC:VALID | 0xXXXX`. Rogue packets injected by attackers display with high-contrast red alerts: `[DROPPED] HMAC_FAIL | REPLAY_CHECK_FAIL`.
+The SCADA interface includes a real-time Deep Packet Inspection hex viewer. Verified packets display with `[RF_2.4G] CRC:OK | HMAC:VALID | 0xXXXX`. Rogue or tampered packets display with high-contrast warning indicators: `[DROPPED] HMAC_SIGNATURE_MISMATCH | REPLAY_SEQUENCE_DUPLICATE`.
 
 ---
 
-## 12. MoRTH AIS-230 Regulatory Compliance & Standards Alignment
+## 12. MoRTH AIS-230 Regulatory Alignment & Standards Context
 
-| AIS-230 Clause | Mandated Automotive Requirement | Project Implementation Detail | Compliance Status |
-|:---|:---|:---|:---:|
-| **Clause 4.1** | Direct Inter-Vehicle Communication | Peer-to-peer 2.4GHz RF communication (SX1281) operating without cellular towers. | **COMPLIANT** |
-| **Clause 4.3** | Latency Budget $\le 20\text{ ms}$ | Hardware SPI + FLRC modulation provides **< 3ms transmission latency**. | **COMPLIANT** |
-| **Clause 5.2** | Minimum 10Hz Broadcast Rate | STM32 non-blocking FreeRTOS/loop architecture broadcasts at 10Hz (every 100ms). | **COMPLIANT** |
-| **Clause 6.1** | Cryptographic Authentication | HMAC-SHA256 signature attached to every packet; constant-time hardware/software verification. | **COMPLIANT** |
-| **Clause 7.4** | Multi-Tier Collision Alerting | Audio-visual warnings at TTC $\le 5.0\text{s}$, $3.5\text{s}$, and emergency braking trigger at $\le 2.5\text{s}$. | **COMPLIANT** |
-| **Clause 8.3** | Emergency Vehicle Preemption | Ambulance SOS packets trigger civilian cockpit yield right-of-way alerts within 200m. | **COMPLIANT** |
+The **Ministry of Road Transport and Highways (MoRTH)** Automotive Industry Standard **AIS-230** outlines the technical guidelines for dedicated Vehicle-to-Vehicle (V2V) communications in India. This prototype is an academic research testbed designed to demonstrate key architectural concepts aligned with AIS-230 principles:
+
+| AIS-230 Conceptual Area | Target Requirement | Prototype Implementation Status | Engineering Realization |
+|:---|:---|:---:|:---|
+| **Direct V2V Communication** | Direct inter-vehicle link without cellular towers | **`ALIGNED`** | Peer-to-peer 2.4 GHz RF link (SX1281) independent of SIM cards or cellular infrastructure. |
+| **Air Latency Budget** | Low-latency safety broadcast | **`DESIGN TARGET`** | Designed target: sub-3 ms RF processing/transmission latency (requires dedicated test-track validation). |
+| **Broadcast Update Cadence** | High-frequency telemetry | **`ALIGNED`** | STM32 non-blocking timer architecture emits signed packets at 10 Hz (every 100 ms). |
+| **Payload Integrity & Auth** | Source verification and tamper resistance | **`ALIGNED`** | Deterministic canonical HMAC-SHA256 signature with bounded anti-replay tracking. |
+| **Multi-Tier Hazard Warning** | Progressive driver advisory and warning | **`ALIGNED`** | Multi-tier alerting at TTC $\le 5.0\text{s}$, $3.5\text{s}$, and laboratory demonstration relay at $\le 2.5\text{s}$. |
+| **Emergency Preemption** | Priority right-of-way awareness | **`ALIGNED`** | Emergency vehicle SOS flag triggers in-cabin yield advisory when within 200m proximity. |
+
+> [!NOTE]
+> *Disclaimer*: This project is an academic research and engineering prototype aligned with selected AIS-230 concepts. Formal automotive compliance requires authorized laboratory homologation and accredited vehicular test-track certification.
+
 
 ---
 
@@ -770,55 +805,87 @@ Experience the bidirectional voice translator:
 
 ## 17. Testing, Benchmarking & Verification
 
-The project includes two rigorous testing suites:
+The project includes automated test suites covering security, relative physics, REST endpoints, and voice translation:
 
-### 1. Master QA Test Suite (Subsystem Validation)
-Validates all 20+ subsystems without requiring a running web server:
-
-```powershell
-# Run the Master QA Suite
-python backend/test_qa_master_suite.py
-
-# Or run via pytest
-pytest backend/test_qa_master_suite.py -v
-```
-
-#### Master QA Suite Verified Results:
-```
-=======================================================================================
- MASTER QA TEST SUITE: V2V-SCADA PLATFORM
-=======================================================================================
- [TEST 1] System Startup, Directory & Module Dependencies ........... PASS
- [TEST 2] Backend REST Endpoints & Schemas ........................... PASS
- [TEST 3] Cryptographic HMAC-SHA256 & Anti-Replay Engine ............ PASS
- [TEST 4] Collision Risk Math (Haversine, Closing Speed, TTC) ....... PASS
- [TEST 5] Highway Geofencing & Tollgate State Machine ................ PASS
- [TEST 6] Multi-Indian-Language Translation (12 Languages) ........... PASS
- [TEST 7] Call Session Lifecycle & Telemetry Dossier Sharing ......... PASS
- [TEST 8] Performance & Concurrent Database Batch Writes ............. PASS
- [TEST 9] STM32 Firmware & Pinout Static Audit ....................... PASS
-=======================================================================================
- FINAL VERDICT: 9 / 9 TEST SUITES PASSED — ZERO DEFECTS DETECTED
-=======================================================================================
-```
-
-### 2. Comprehensive E2E Live Integration Suite
-Validates the live HTTP REST, WebSocket, and PDF generation pipelines (run while Uvicorn is active):
+### 1. Automated Pytest Suite (`tests/test_v2v_security_and_physics.py`)
+Executes unit and integration tests covering canonical HMAC-SHA256 signing, anti-replay protections, relative motion kinematics, emergency preemption, REST API hardening, and ML classifier fallback:
 
 ```powershell
-python backend/test_comprehensive_system.py
+pytest tests/test_v2v_security_and_physics.py -v
 ```
 
-### 3. Voice Call & Indic Translation Pipeline Suite
-Validates speech turns, WebRTC signaling, and multilingual dictionary fallbacks:
+#### Verified Test Suite Results (Real Execution):
+```
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-7.4.3, pluggy-1.6.0
+rootdir: C:\projectss\v2v communication
+plugins: anyio-3.7.1
+collected 21 items
+
+tests/test_v2v_security_and_physics.py::test_canonical_hmac_valid ............. PASSED [  4%]
+tests/test_v2v_security_and_physics.py::test_hmac_rejects_corrupted_signature .. PASSED [  9%]
+tests/test_v2v_security_and_physics.py::test_hmac_detects_tampered_gps_coordinates PASSED [ 14%]
+tests/test_v2v_security_and_physics.py::test_hmac_detects_tampered_speed ....... PASSED [ 19%]
+tests/test_v2v_security_and_physics.py::test_hmac_detects_tampered_sequence_number PASSED [ 23%]
+tests/test_v2v_security_and_physics.py::test_anti_replay_rejects_expired_timestamp PASSED [ 28%]
+tests/test_v2v_security_and_physics.py::test_anti_replay_rejects_future_timestamp PASSED [ 33%]
+tests/test_v2v_security_and_physics.py::test_anti_replay_monotonic_sequence_enforcement PASSED [ 38%]
+tests/test_v2v_security_and_physics.py::test_missing_signature_rejection ....... PASSED [ 42%]
+tests/test_v2v_security_and_physics.py::test_collision_approaching_vehicles_head_on PASSED [ 47%]
+tests/test_v2v_security_and_physics.py::test_collision_separating_vehicles_diverging PASSED [ 52%]
+tests/test_v2v_security_and_physics.py::test_collision_same_position_zero_division_guard PASSED [ 57%]
+tests/test_v2v_security_and_physics.py::test_emergency_vehicle_preemption_alert PASSED [ 61%]
+tests/test_v2v_security_and_physics.py::test_geofence_polygon_containment ...... PASSED [ 66%]
+tests/test_v2v_security_and_physics.py::test_api_telemetry_valid_packet ........ PASSED [ 71%]
+tests/test_v2v_security_and_physics.py::test_api_telemetry_rejects_untrusted_hmac PASSED [ 76%]
+tests/test_v2v_security_and_physics.py::test_api_telemetry_pydantic_schema_validation PASSED [ 80%]
+tests/test_v2v_security_and_physics.py::test_api_download_path_traversal_prevention PASSED [ 85%]
+tests/test_v2v_security_and_physics.py::test_api_health_subsystems ............. PASSED [ 90%]
+tests/test_v2v_security_and_physics.py::test_ml_collision_model_loading_and_inference PASSED [ 95%]
+tests/test_v2v_security_and_physics.py::test_ml_rule_based_fallback_when_model_missing PASSED [100%]
+
+======================= 21 passed in 5.45s =======================
+```
+
+### 2. Voice Call & Multilingual Indic Pipeline Suite
+Validates the full speech turn loop, Indic translation engines, and incident dossier sharing:
 
 ```powershell
 python backend/test_voice_call_system.py
 ```
 
+### 3. Machine Learning Collision Classifier Training & Evaluation
+Evaluates the prototype collision model against synthetic kinematic test splits and exports reproducibility metrics to `ml/model_metrics.json`:
+
+```powershell
+python ml/train_model.py
+```
+- **Accuracy**: 99.60%
+- **Weighted Precision**: 0.9960
+- **Weighted Recall**: 0.9960
+- **Weighted F1-Score**: 0.9960
+- **Confusion Matrix**: `[[567, 1, 0], [0, 231, 3], [0, 0, 198]]`
+
 ---
 
-## 18. Troubleshooting & Gotchas
+## 18. Prototype Limitations & Engineering Caveats
+
+To ensure transparent academic engineering communication, the following technical limitations are explicitly noted:
+
+1. **RF Wireless Range**: The 1.0–2.0 km range figure is an estimated link-budget design target based on the Semtech SX1281 PHY layer at +10 to +12.5 dBm in open line-of-sight (LOS). Physical propagation in vehicular environments is heavily influenced by ground-plane reflection, antenna height, Fresnel zone obstruction, and vehicle metallic bodywork, requiring formal open-road drive testing.
+2. **Latency Measurement**: The sub-3 ms metric is an RF transmission airtime design target calculated from SX1281 high-speed FLRC modulation framing. Complete end-to-end latency—including GNSS NMEA sentence ingestion at 9600 baud, microcontroller parsing, cryptography, and USB bridge handling—requires dedicated measurement with a digital storage oscilloscope or hardware logic analyzer.
+3. **Machine Learning Model**: The collision risk classifier is trained on a synthetic kinematic dataset generated from deterministic Time-to-Collision (TTC) formulas. It is an academic demonstration showing how ML inference can be embedded alongside rule-based physics; it does NOT represent production automotive ADAS AI trained on real-world crash or CAN-bus sensor logs.
+4. **AEB Actuation Safety Warning**:
+   > [!CAUTION]
+   > **THIS IS A LABORATORY SAFETY DEMONSTRATION PROTOTYPE.**
+   > **DO NOT CONNECT DIRECTLY TO A REAL VEHICLE BRAKING SYSTEM.**
+   > The physical relay module operates purely as a visual indicator and laboratory actuator simulation. Production automotive braking intervention requires safety-certified brake-by-wire ECUs with ASIL-D functional safety redundancy.
+5. **Speech Recognition & Cloud Boundaries**: While the core V2V safety mesh (STM32 $\leftrightarrow$ SX1281 RF) operates with zero internet or cloud dependency, the optional voice translation HUD relies on client-side browser APIs (Web Speech API) and external translation providers when configured.
+6. **Regulatory Homologation**: This system is an academic research prototype aligned with selected conceptual guidelines of MoRTH AIS-230. It has not undergone formal homologation or statutory testing by authorized testing bodies (e.g. ARAI or ICAT).
+
+---
+
+## 19. Troubleshooting & Gotchas
 
 1. **AudioContext Autoplay Warnings in Chrome/Edge**:
    - Modern browsers block audio playback until the user interacts with the page. Click anywhere on the HUD or click **"🎤 Start Call"** to unlock the Web Audio synthesizer.
@@ -833,8 +900,9 @@ python backend/test_voice_call_system.py
 
 ---
 
-## License & Attribution
+## 20. License & Attribution
 
-This project is released under the **MIT License**. Aligned with the **Ministry of Road Transport and Highways (MoRTH), Government of India**, AIS-230 vehicular safety framework.
+This project is released under the **MIT License**. Aligned with conceptual guidelines from the **Ministry of Road Transport and Highways (MoRTH), Government of India**, AIS-230 vehicular safety framework.
 
 Developed for academic research, vehicular safety engineering, and connected intelligent transportation systems.
+

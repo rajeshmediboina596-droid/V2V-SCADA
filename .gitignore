@@ -18,11 +18,23 @@ __pycache__/
 # OS Files
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/
 
-# Reports
+# Reports & Logs
 reports/*.pdf
+*.log
 
-# Certificates & Private Keys
+# Pytest & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Certificates & Private Keys (NEVER COMMIT)
+*.key
+*.pem
+*.pfx
+*.pkcs12
 mqtt/certs/*.key
-# You may want to ignore all certs if they are generated locally
-# mqtt/certs/*.crt
+mqtt/certs/*.pem
+

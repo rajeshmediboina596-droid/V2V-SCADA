@@ -334,11 +334,12 @@ class CallManager:
         }
         await self.broadcast_to_call(call_id, event)
         return {
-            "status": "transmitted",
+            "status": "success",
             "transmission_status": "transmitted",
             "dossier": dossier,
             "telemetry_snapshot": dossier
         }
+
 
 # Singleton instance
 call_manager = CallManager()

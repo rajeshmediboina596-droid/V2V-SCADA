@@ -8,7 +8,12 @@ import os
 
 # Add parent directory to sys.path to import config
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from backend.config import SERIAL_PORT, SERIAL_BAUDRATE, MQTT_BROKER, MQTT_PORT, MQTT_TOPIC_TELEMETRY, MQTT_TOPIC_GATEWAY
+from backend.config import (
+    SERIAL_PORT, SERIAL_BAUDRATE, MQTT_BROKER, MQTT_PORT,
+    MQTT_TOPIC_TELEMETRY, MQTT_TOPIC_GATEWAY, MQTT_USERNAME,
+    MQTT_PASSWORD, MQTT_USE_TLS, MQTT_CA_CERT, MQTT_CLIENT_CERT,
+    MQTT_CLIENT_KEY, MQTT_SECURITY_MODE
+)
 from backend.mqtt_client import publish_or_dispatch
 
 mqtt_connected = False
@@ -17,7 +22,7 @@ def on_connect(client, userdata, flags, rc):
     global mqtt_connected
     if rc == 0:
         mqtt_connected = True
-        print("[Gateway Bridge] Connected to Mosquitto MQTT Broker!")
+        print(f"[Gateway Bridge] Connected to Mosquitto MQTT Broker! (Mode: {MQTT_SECURITY_MODE})")
     else:
         mqtt_connected = False
         print(f"[Gateway Bridge] MQTT connect failed (rc={rc})")
@@ -48,6 +53,20 @@ def main():
     global mqtt_connected
     client = mqtt.Client(client_id="STM32_Gateway_Serial_Bridge")
     client.on_connect = on_connect
+
+    if MQTT_USERNAME and MQTT_PASSWORD:
+        client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+
+    if MQTT_USE_TLS and MQTT_CA_CERT and os.path.exists(MQTT_CA_CERT):
+        try:
+            client.tls_set(
+                ca_certs=MQTT_CA_CERT,
+                certfile=MQTT_CLIENT_CERT if os.path.exists(MQTT_CLIENT_CERT) else None,
+                keyfile=MQTT_CLIENT_KEY if os.path.exists(MQTT_CLIENT_KEY) else None
+            )
+            print("[Gateway Bridge] TLS enabled for secure MQTT transport.")
+        except Exception as e:
+            print(f"[Gateway Bridge] TLS setup warning: {e}")
 
     print(f"[Gateway Bridge] Checking MQTT Broker at {MQTT_BROKER}:{MQTT_PORT}...")
     try:
