@@ -62,10 +62,29 @@ REPLAY_TOLERANCE_SECONDS = int(os.getenv("REPLAY_TOLERANCE_SECONDS", "30"))
 # Maximum number of vehicle IDs tracked in memory for sequence anti-replay
 MAX_TRACKED_VEHICLES = int(os.getenv("MAX_TRACKED_VEHICLES", "1000"))
 
+# API Authentication & Role-Based Access Control
+# In DEMO_MODE, API auth is optional (default false) to allow frictionless demonstration.
+# In SECURE/PRODUCTION mode, API auth is enforced (default true).
+API_AUTH_ENABLED = os.getenv(
+    "API_AUTH_ENABLED",
+    "false" if DEMO_MODE else "true"
+).lower() in ("true", "1", "yes")
+
+API_ADMIN_KEY = os.getenv("API_ADMIN_KEY", "admin_secret_key_demo" if DEMO_MODE else "")
+API_OPERATOR_KEY = os.getenv("API_OPERATOR_KEY", "operator_secret_key_demo" if DEMO_MODE else "")
+API_VIEWER_KEY = os.getenv("API_VIEWER_KEY", "viewer_secret_key_demo" if DEMO_MODE else "")
+
+if ENVIRONMENT == "production" and API_AUTH_ENABLED:
+    if not API_ADMIN_KEY or API_ADMIN_KEY in _INSECURE_SECRETS:
+        raise RuntimeError(
+            "[SECURITY CRITICAL] Application startup aborted: API_ADMIN_KEY is missing or set to an "
+            "insecure placeholder in production mode with API_AUTH_ENABLED=true. Set a strong secret key."
+        )
+
 # CORS Allowed Origins (Comma-separated string of trusted origin URLs)
 _cors_origins_raw = os.getenv(
     "CORS_ALLOWED_ORIGINS",
-    "http://localhost:8000,http://127.0.0.1:8000,http://localhost:3000"
+    "http://localhost:8000,http://127.0.0.1:8000"
 )
 CORS_ALLOWED_ORIGINS = [
     origin.strip() for origin in _cors_origins_raw.split(",") if origin.strip()

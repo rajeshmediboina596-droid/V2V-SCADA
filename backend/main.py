@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, BackgroundTasks, Request, Query, HTTPException
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, BackgroundTasks, Request, Query, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from fastapi.staticfiles import StaticFiles
@@ -13,6 +13,7 @@ import math
 import random
 import sqlite3
 import logging
+import re
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 
@@ -27,10 +28,24 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from backend.config import (
     BASE_DIR, FRONTEND_DIR, REPORTS_DIR, DB_PATH, ENVIRONMENT, DEMO_MODE,
-    MQTT_BROKER, MQTT_PORT, MQTT_TOPIC_TELEMETRY, CORS_ALLOWED_ORIGINS,
-    STT_PROVIDER, TRANSLATION_PROVIDER, TTS_PROVIDER, TELEPHONY_PROVIDER,
-    MAX_VALID_SPEED_KMPH
+    MQTT_BROKER, MQTT_PORT, MQTT_TOPIC_TELEMETRY, MQTT_TOPIC_COMMANDS,
+    CORS_ALLOWED_ORIGINS, STT_PROVIDER, TRANSLATION_PROVIDER, TTS_PROVIDER,
+    TELEPHONY_PROVIDER, MAX_VALID_SPEED_KMPH, API_AUTH_ENABLED
 )
+from backend.auth import require_role
+
+# Whitelisted SCADA dispatch commands (prevents command injection / arbitrary string abuse)
+SUPPORTED_SCADA_COMMANDS = {
+    "EMERGENCY_ALERT",
+    "SLOW_DOWN",
+    "STOP_WARNING",
+    "YIELD_TO_EMERGENCY",
+    "TEST_ALARM",
+    "CLEAR_HAZARD",
+    "RESUME_NORMAL_SPEED",
+}
+
+SAFE_FILENAME_REGEX = re.compile(r"^[a-zA-Z0-9_\-]+\.pdf$")
 from backend.database import (
     init_db, get_tollgates, get_emergency_contacts, get_recent_crossings,
     get_recent_incidents, get_recent_security_events, get_vehicles_list,
@@ -219,7 +234,7 @@ async def get_system_health():
     }
 
 @app.get("/api/metrics")
-async def get_performance_metrics():
+async def get_performance_metrics(user: Dict[str, Any] = Depends(require_role("viewer"))):
     """
     Returns non-blocking performance profiling metrics across the telemetry pipeline.
     Categorizes dimensions into DESIGN TARGET, MEASURED, and NOT MEASURED.
@@ -230,7 +245,7 @@ async def get_performance_metrics():
 # Vehicles & Telemetry APIs
 # ------------------------------------------------------------------------------
 @app.get("/api/vehicles")
-async def get_active_vehicles():
+async def get_active_vehicles(user: Dict[str, Any] = Depends(require_role("viewer"))):
     return {
         "active_vehicles": list(vehicle_states.values()),
         "registered_directory": get_vehicles_list()
@@ -256,7 +271,10 @@ class TelemetryPayload(BaseModel):
     signature: str = Field(min_length=64, max_length=64, description="HMAC-SHA256 hex signature")
 
 @app.post("/api/telemetry")
-async def ingest_telemetry(payload: TelemetryPayload):
+async def ingest_telemetry(
+    payload: TelemetryPayload,
+    user: Dict[str, Any] = Depends(require_role("operator"))
+):
     """
     Ingest vehicle telemetry via HTTP POST.
     Enforces schema bounds, HMAC-SHA256 signature verification,
@@ -284,7 +302,8 @@ async def ingest_telemetry(payload: TelemetryPayload):
         "status": "processed",
         "vehicle_id": payload.vehicle_id,
         "seq": payload.seq,
-        "received_at": int(time.time())
+        "received_at": int(time.time()),
+        "processed_by": user.get("user_id")
     }
 
 
@@ -292,67 +311,70 @@ async def ingest_telemetry(payload: TelemetryPayload):
 # Highway Route & Tollgate APIs
 # ------------------------------------------------------------------------------
 @app.get("/api/tollgates")
-async def fetch_tollgates():
+async def fetch_tollgates(user: Dict[str, Any] = Depends(require_role("viewer"))):
     return {"tollgates": get_tollgates()}
 
 @app.get("/api/tollgates/crossings")
-async def fetch_tollgate_crossings(limit: int = 50):
+async def fetch_tollgate_crossings(
+    limit: int = Query(default=50, ge=1, le=500),
+    user: Dict[str, Any] = Depends(require_role("viewer"))
+):
     return {"crossings": get_recent_crossings(limit)}
 
 @app.get("/api/emergency-contacts")
-async def fetch_emergency_contacts():
+async def fetch_emergency_contacts(user: Dict[str, Any] = Depends(require_role("viewer"))):
     return {"contacts": get_emergency_contacts()}
 
 # ------------------------------------------------------------------------------
 # Real-Time Multi-Indian-Language Voice Call & Translation APIs
 # ------------------------------------------------------------------------------
 class StartCallRequest(BaseModel):
-    vehicle_id: str = "DEMO-1"
-    tollgate_id: str = "TG-DEMO"
-    driver_lang: str = "te"
-    operator_lang: str = "hi"
-    incident_type: str = "General Emergency"
+    vehicle_id: str = Field(default="DEMO-1", min_length=1, max_length=32)
+    tollgate_id: str = Field(default="TG-DEMO", min_length=1, max_length=32)
+    driver_lang: str = Field(default="te", min_length=2, max_length=10)
+    operator_lang: str = Field(default="hi", min_length=2, max_length=10)
+    incident_type: str = Field(default="General Emergency", max_length=64)
     emergency_info_shared: bool = False
 
 class EndCallRequest(BaseModel):
-    call_id: str
-    reason: str = "Call Completed"
+    call_id: str = Field(min_length=1, max_length=64)
+    reason: str = Field(default="Call Completed", max_length=128)
 
 class TranslationSessionRequest(BaseModel):
-    call_id: Optional[str] = None
-    driver_lang: str = "te"
-    operator_lang: str = "hi"
+    call_id: Optional[str] = Field(default=None, max_length=64)
+    driver_lang: str = Field(default="te", min_length=2, max_length=10)
+    operator_lang: str = Field(default="hi", min_length=2, max_length=10)
 
 class AudioTranslationRequest(BaseModel):
-    call_id: str
-    sender_role: str = "Driver"
-    text: Optional[str] = None
-    source_lang: str = "auto"
-    target_lang: str = "hi"
-    audio_base64: Optional[str] = None
+    call_id: str = Field(min_length=1, max_length=64)
+    sender_role: str = Field(default="Driver", max_length=32)
+    text: Optional[str] = Field(default=None, max_length=1024)
+    source_lang: str = Field(default="auto", max_length=10)
+    target_lang: str = Field(default="hi", min_length=2, max_length=10)
+    audio_base64: Optional[str] = Field(default=None, max_length=1048576)
 
 class IncidentShareRequest(BaseModel):
     confirmed: bool = True
 
 class SimulateTurnRequest(BaseModel):
-    call_id: str
-    sender_role: str = "Driver"
-    text: str
-    source_lang: str = "te"
-    target_lang: str = "hi"
+    call_id: str = Field(min_length=1, max_length=64)
+    sender_role: str = Field(default="Driver", max_length=32)
+    text: str = Field(min_length=1, max_length=1024)
+    source_lang: str = Field(default="te", min_length=2, max_length=10)
+    target_lang: str = Field(default="hi", min_length=2, max_length=10)
 
 class TranslationRequest(BaseModel):
-    text: str
-    source_lang: str
-    target_lang: str
-    speaker_type: str = "Driver"
-    session_id: Optional[str] = None
+    text: str = Field(min_length=1, max_length=1024)
+    source_lang: str = Field(default="auto", max_length=10)
+    target_lang: str = Field(default="hi", min_length=2, max_length=10)
+    speaker_type: str = Field(default="Driver", max_length=32)
+    session_id: Optional[str] = Field(default=None, max_length=64)
 
 class CallLogRequest(BaseModel):
-    contact_name: str
-    phone_number: str
-    category: str
-    highway: str = "NH-65"
+    contact_name: str = Field(min_length=1, max_length=64)
+    phone_number: str = Field(min_length=1, max_length=32)
+    category: str = Field(min_length=1, max_length=64)
+    highway: str = Field(default="NH-65", max_length=64)
 
 @app.post("/calls/start")
 @app.post("/api/calls/start")
@@ -516,25 +538,38 @@ async def log_call_attempt(req: CallLogRequest):
 # Incident & Security Audit APIs
 # ------------------------------------------------------------------------------
 @app.get("/api/incidents")
-async def fetch_incidents(limit: int = 50):
+async def fetch_incidents(
+    limit: int = Query(default=50, ge=1, le=500),
+    user: Dict[str, Any] = Depends(require_role("viewer"))
+):
     return {"incidents": get_recent_incidents(limit)}
 
 @app.get("/api/security-events")
-async def fetch_security_events(limit: int = 50):
+async def fetch_security_events(
+    limit: int = Query(default=50, ge=1, le=500),
+    user: Dict[str, Any] = Depends(require_role("viewer"))
+):
     return {"security_events": get_recent_security_events(limit)}
 
 @app.post("/api/report")
-async def generate_report():
-    filepath = generate_pdf_report()
-    filename = os.path.basename(filepath)
-    return {"status": "success", "file": filename}
+async def generate_report(user: Dict[str, Any] = Depends(require_role("operator"))):
+    try:
+        filepath = generate_pdf_report()
+        filename = os.path.basename(filepath)
+        return {"status": "success", "file": filename, "generated_by": user.get("user_id")}
+    except Exception as e:
+        logger.error(f"Failed to generate report: {e}")
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Failed to generate report."})
 
 @app.get("/api/download/{filename}")
-async def download_report(filename: str):
+async def download_report(
+    filename: str,
+    user: Dict[str, Any] = Depends(require_role("viewer"))
+):
     """
     Secure file download endpoint.
     Guards against directory traversal by verifying canonical paths
-    and strictly whitelisting allowed PDF files.
+    and strictly whitelisting allowed PDF report names.
     """
     if ".." in filename or "/" in filename or "\\" in filename:
         return JSONResponse(
@@ -542,10 +577,10 @@ async def download_report(filename: str):
             content={"error": "Path traversal pattern rejected."}
         )
 
-    if not filename.lower().endswith(".pdf"):
+    if not SAFE_FILENAME_REGEX.match(filename):
         return JSONResponse(
             status_code=400,
-            content={"error": "Unauthorized file type. Only PDF reports can be downloaded."}
+            content={"error": "Invalid report filename format. Only alphanumeric PDF reports are allowed."}
         )
 
     target_path = (REPORTS_DIR / filename).resolve()
@@ -561,7 +596,7 @@ async def download_report(filename: str):
 
     if target_path.is_file() and target_path.exists():
         return FileResponse(str(target_path), media_type='application/pdf', filename=filename)
-    return JSONResponse(status_code=404, content={"error": "Report file not found."})
+    return JSONResponse(status_code=404, content={"error": "Requested report file was not found."})
 
 # ------------------------------------------------------------------------------
 # Simulation & Spoof Testing Emitters
@@ -632,19 +667,22 @@ def run_demo_simulation():
 
             time.sleep(0.1) # 10Hz rate
     except Exception as e:
-        print(f"[Demo Simulation Error]: {e}")
+        logger.error(f"[Demo Simulation Error]: {e}")
     finally:
         is_demo_running = False
 
 @app.post("/api/demo")
-async def trigger_demo(background_tasks: BackgroundTasks):
+async def trigger_demo(
+    background_tasks: BackgroundTasks,
+    user: Dict[str, Any] = Depends(require_role("admin"))
+):
     if is_demo_running:
-        return {"status": "error", "message": "Demo simulation is already running"}
+        return JSONResponse(status_code=409, content={"status": "error", "message": "Demo simulation is already running"})
     background_tasks.add_task(run_demo_simulation)
     return {"status": "success", "message": "Demo simulation launched"}
 
 @app.post("/api/spoof")
-async def trigger_spoof():
+async def trigger_spoof(user: Dict[str, Any] = Depends(require_role("admin"))):
     """Simulates a rogue Ghost Vehicle injection attack with a tampered cryptographic signature."""
     try:
         data = {
@@ -669,23 +707,34 @@ async def trigger_spoof():
         publish_or_dispatch("v2v/telemetry", json.dumps(data))
         return {"status": "success", "message": "Rogue packet broadcasted; check DPI threat feed."}
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        logger.error(f"Spoof simulation failed: {e}")
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Spoof simulation dispatch failed."})
 
 class CommandRequest(BaseModel):
-    command: str
+    command: str = Field(min_length=1, max_length=64, description="SCADA command code")
 
 @app.post("/api/command")
-async def broadcast_command(req: CommandRequest):
+async def broadcast_command(
+    req: CommandRequest,
+    user: Dict[str, Any] = Depends(require_role("operator"))
+):
+    cmd_clean = req.command.strip().upper()
+    if cmd_clean not in SUPPORTED_SCADA_COMMANDS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported SCADA command '{req.command}'. Allowed commands: {sorted(SUPPORTED_SCADA_COMMANDS)}"
+        )
     try:
         payload = {
-            "cmd": req.command,
+            "cmd": cmd_clean,
             "timestamp": int(time.time()),
-            "source": "SCADA_CENTRAL_COMMAND"
+            "source": f"SCADA_{user.get('user_id', 'CENTRAL')}"
         }
-        publish_or_dispatch("v2v/commands", json.dumps(payload))
-        return {"status": "success", "command": req.command}
+        publish_or_dispatch(MQTT_TOPIC_COMMANDS, json.dumps(payload))
+        return {"status": "success", "command": cmd_clean, "issued_by": user.get("user_id")}
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        logger.error(f"Failed to broadcast SCADA command: {e}")
+        return JSONResponse(status_code=500, content={"status": "error", "message": "Failed to broadcast SCADA command."})
 
 if __name__ == "__main__":
     uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)

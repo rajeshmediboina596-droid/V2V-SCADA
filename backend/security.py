@@ -54,6 +54,9 @@ def build_canonical_signing_string(data: dict) -> str:
         f"lat={lat}|lon={lon}|speed_kmph={speed}|heading_deg={heading}"
     )
 
+# Backward-compatible alias for existing test suites
+build_signing_string = build_canonical_signing_string
+
 def build_legacy_signing_string(data: dict) -> str:
     """Legacy string concatenation fallback for transition compatibility."""
     vid = str(data.get("vehicle_id", ""))

@@ -1,0 +1,63 @@
+version: '3.8'
+
+# ==============================================================================
+# V2V-SCADA Multi-Container Orchestration - SECURE PRODUCTION / BENCH MODE
+# Enforces:
+# - Authenticated TLS MQTT on port 8883 using mqtt/mosquitto_secure.conf
+# - DEMO_MODE=false with mandatory API_AUTH_ENABLED=true
+# - Role-based API access with operator/admin secret keys
+# ==============================================================================
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2.0.18
+    container_name: v2v_mosquitto_secure
+    restart: unless-stopped
+    ports:
+      - "8883:8883"
+    volumes:
+      - ./mqtt/mosquitto_secure.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mqtt/passwd:/mosquitto/config/passwd:ro
+      - ./mqtt/mosquitto.acl:/mosquitto/config/mosquitto.acl:ro
+      - mosquitto_data_secure:/mosquitto/data
+      - mosquitto_log_secure:/mosquitto/log
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_sub -t '$$SYS/broker/uptime' -C 1 -i healthcheck -u scada_backend -P scada_secure_pass || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: v2v_scada_backend_secure
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - DEMO_MODE=false
+      - API_AUTH_ENABLED=true
+      - API_ADMIN_KEY=${API_ADMIN_KEY:-prod_admin_strong_secret_key_991}
+      - API_OPERATOR_KEY=${API_OPERATOR_KEY:-prod_operator_strong_secret_key_882}
+      - API_VIEWER_KEY=${API_VIEWER_KEY:-prod_viewer_strong_secret_key_773}
+      - MQTT_BROKER=mosquitto
+      - MQTT_PORT=8883
+      - MQTT_SECURITY_MODE=secure
+      - MQTT_USERNAME=${MQTT_USERNAME:-scada_backend}
+      - MQTT_PASSWORD=${MQTT_PASSWORD:-scada_secure_pass}
+      - HMAC_SECRET=${HMAC_SECRET:-prod_hmac_256_bit_secure_signing_secret_key}
+      - DB_PATH=/app/database/v2v_data.db
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost:8000,http://127.0.0.1:8000}
+    volumes:
+      - ./database:/app/database
+      - ./reports:/app/reports
+    depends_on:
+      mosquitto:
+        condition: service_started
+
+volumes:
+  mosquitto_data_secure:
+  mosquitto_log_secure:

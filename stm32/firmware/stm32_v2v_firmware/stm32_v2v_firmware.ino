@@ -192,23 +192,24 @@ float computeClosingSpeedMps(float lat1, float lon1, float speed1_kmph, float he
     float h1 = heading1_deg * DEG_TO_RAD;
     float h2 = heading2_deg * DEG_TO_RAD;
 
-    float v1x = s1 * cos(h1);
-    float v1y = s1 * sin(h1);
-    float v2x = s2 * cos(h2);
-    float v2y = s2 * sin(h2);
+    // Compass heading: 0 deg = North (+Y), 90 deg = East (+X), 180 deg = South (-Y), 270 deg = West (-X)
+    float v1x = s1 * sin(h1);
+    float v1y = s1 * cos(h1);
+    float v2x = s2 * sin(h2);
+    float v2y = s2 * cos(h2);
 
     float rvx = v1x - v2x;
     float rvy = v1y - v2y;
 
     float midLat = ((lat1 + lat2) / 2.0) * DEG_TO_RAD;
-    float dx = (lon1 - lon2) * 111320.0 * cos(midLat);
-    float dy = (lat1 - lat2) * 111320.0;
+    float dx = (lon2 - lon1) * 111320.0 * cos(midLat);
+    float dy = (lat2 - lat1) * 111320.0;
 
     float posMag = sqrt(dx * dx + dy * dy);
     if (posMag < 0.1) posMag = 0.1;
 
     float dot = dx * rvx + dy * rvy;
-    float closing = - (dot / posMag);
+    float closing = dot / posMag;
     return (closing > 0.0) ? closing : 0.0;
 }
 

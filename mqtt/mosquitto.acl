@@ -1,0 +1,25 @@
+# ==============================================================================
+# Mosquitto MQTT Topic Access Control Lists (ACL)
+# ==============================================================================
+# Principle of Least Privilege:
+# - Edge gateways publish telemetry to v2v/telemetry and gateway health
+# - SCADA Backend subscribes to telemetry and health; publishes commands
+# - Microcontrollers/vehicles subscribe only to dispatch commands
+# ==============================================================================
+
+# SCADA Central Server / Backend Account
+user scada_backend
+topic read v2v/telemetry
+topic read v2v/gateway/health
+topic write v2v/commands
+topic readwrite v2v/incidents
+
+# Edge LoRa / FLRC RF Telemetry Gateway Account
+user rsu_gateway
+topic write v2v/telemetry
+topic write v2v/gateway/health
+topic read v2v/commands
+
+# Registered Vehicle Clients (Read broadcast alerts)
+user vehicle_client
+topic read v2v/commands

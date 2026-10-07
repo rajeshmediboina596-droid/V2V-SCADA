@@ -1,9 +1,12 @@
+import logging
 import time
 import uuid
 import asyncio
 from typing import Dict, Any, Optional
 from backend.providers.translation import MultiIndianTranslationEngine, INDIAN_LANGUAGES, EMERGENCY_LEXICON
 from backend.database import log_translation
+
+logger = logging.getLogger("v2v_translation")
 
 SUPPORTED_LANGUAGES = {code: f"{data['name']} ({data['native']})" for code, data in INDIAN_LANGUAGES.items()}
 
@@ -33,7 +36,7 @@ def translate_message(text: str, source_lang: str, target_lang: str, speaker_typ
         translated = res.get("translated_text", text)
         engine_used = res.get("engine", "hybrid")
     except Exception as e:
-        print(f"[Translation Engine Warning]: {e}")
+        logger.warning(f"Translation engine fallback triggered: {e}")
         translated = text
         engine_used = "Offline Fallback"
 
@@ -41,7 +44,7 @@ def translate_message(text: str, source_lang: str, target_lang: str, speaker_typ
     try:
         log_translation(session_id, source_lang, target_lang, speaker_type, text, translated)
     except Exception as e:
-        print(f"[Translation Log Error]: {e}")
+        logger.error(f"Failed to log translation event: {e}")
 
     return {
         "session_id": session_id,
